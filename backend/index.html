@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FeesLedger — School Fees Management</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root{--green:#16a34a;--green2:#15803d;--orange:#f59e0b;--red:#dc2626;--blue:#2563eb;--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#64748b;--border:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:flex;min-height:100vh}
+aside{width:245px;background:#0f172a;color:white;padding:18px;position:sticky;top:0;height:100vh}
+.logo{font-size:22px;font-weight:800;margin:8px 0 24px}.logo span{color:#4ade80}
+.nav button{display:block;width:100%;text-align:left;background:transparent;color:#cbd5e1;padding:12px;border-radius:10px;margin:3px 0}.nav button.active,.nav button:hover{background:#1e293b;color:white}
+main{flex:1;padding:24px;min-width:0}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap}
+.top h1{margin:0;font-size:26px}.controls{display:flex;gap:8px;flex-wrap:wrap}
+select,input,textarea{background:white;border:1px solid var(--border);border-radius:9px;padding:10px;color:var(--text)}textarea{min-height:130px;width:100%}
+.btn{padding:10px 14px;border-radius:9px;background:#e2e8f0}.primary{background:var(--blue);color:white}.success{background:var(--green);color:white}.danger{background:var(--red);color:white}.warning{background:var(--orange);color:white}.dark{background:#0f172a;color:white}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:17px;box-shadow:0 2px 8px #0f172a08}.metric{font-size:25px;font-weight:800;margin-top:7px}.muted{color:var(--muted);font-size:13px}
+.progress{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:var(--green)}
+.section{margin-top:18px}.section h2{font-size:19px;margin:0 0 12px}.tablewrap{overflow:auto;background:white;border:1px solid var(--border);border-radius:14px}table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:11px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}th{background:#f8fafc;font-size:12px;color:var(--muted)}.studentpic{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#e2e8f0;vertical-align:middle;margin-right:7px}.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:12px;font-weight:700}.paid{background:#dcfce7;color:#166534}.partial{background:#fef3c7;color:#92400e}.unpaid{background:#fee2e2;color:#991b1b}.actions{display:flex;gap:5px}.actions .btn{font-size:11px;padding:7px 8px}.hidden{display:none!important}
+.classhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.classcard{margin-bottom:18px}.summary{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px}.summary .mini{background:#f8fafc;padding:10px;border-radius:9px}.mini b{display:block;margin-top:4px}
+.chart{height:220px;display:flex;align-items:end;gap:14px;padding:15px 10px}.bar{flex:1;max-width:80px;background:#22c55e;border-radius:7px 7px 0 0;min-height:4px;position:relative}.bar span{position:absolute;top:-24px;font-size:11px}.bar small{position:absolute;bottom:-20px;width:100%;text-align:center}
+.modal{position:fixed;inset:0;background:#0f172a99;display:flex;align-items:center;justify-content:center;padding:15px;z-index:20}.modalbox{background:white;border-radius:15px;padding:20px;max-width:620px;width:100%;max-height:90vh;overflow:auto}.modalbox h2{margin-top:0}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.formgroup{margin:10px 0}.formgroup label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+.toast{position:fixed;right:18px;bottom:18px;background:#0f172a;color:white;padding:12px 16px;border-radius:10px;z-index:50}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#166534);padding:18px}.loginbox{width:430px;background:white;border-radius:18px;padding:25px}.loginbox h1{margin-top:0}.loginbox input{width:100%}.otpbox{text-align:center}.otp{font-size:25px;letter-spacing:8px;text-align:center}
+.logoPreview{width:70px;height:70px;border-radius:12px;object-fit:cover;border:1px solid var(--border)}.childcard{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;margin:7px 0}
+@media(max-width:900px){aside{width:70px;padding:10px}.logo{font-size:0}.logo:before{content:"FL";font-size:18px}.nav button{font-size:0;text-align:center}.nav button:before{content:" ";font-size:20px}.grid{grid-template-columns:repeat(2,1fr)}.summary{grid-template-columns:repeat(2,1fr)}main{padding:15px}}
+@media(max-width:550px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.top h1{font-size:21px}}
+.receipt-wrap{max-width:800px;margin:auto}.receipt-paper{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px;max-width:760px;margin:auto;box-shadow:0 8px 30px #0f172a12}.receipt-head{display:flex;align-items:center;gap:16px;border-bottom:2px solid var(--border);padding-bottom:16px}.receipt-head h1{margin:0 0 5px;font-size:22px}.receipt-logo{width:72px;height:72px;object-fit:contain;border-radius:10px;border:1px solid var(--border)}.receipt-title{text-align:center;font-size:20px;font-weight:800;margin:20px 0 12px}.receipt-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#f8fafc;padding:10px;border-radius:9px}.receipt-grid{display:grid;grid-template-columns:100px 1fr 1fr;gap:18px;margin-top:18px}.receipt-photo img,.photo-placeholder{width:90px;height:110px;object-fit:cover;border-radius:10px;border:1px solid var(--border)}.photo-placeholder{display:grid;place-items:center;text-align:center;background:#f1f5f9;color:var(--muted);font-size:12px}.receipt-grid h3,.receipt-payment h3{margin:0 0 8px;font-size:14px}.receipt-grid p{margin:6px 0;font-size:13px;word-break:break-word}.receipt-payment{margin-top:20px;border-top:1px solid var(--border);padding-top:15px}.payline{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eef2f7}.payline.balance{font-size:16px}.receipt-status{text-align:center;margin:18px auto;padding:10px;border-radius:9px;font-weight:800;max-width:240px}.receipt-status.paid{background:#dcfce7;color:#166534}.receipt-status.partial{background:#fef3c7;color:#92400e}.receipt-status.unpaid{background:#fee2e2;color:#991b1b}.receipt-footer{text-align:center;border-top:1px solid var(--border);padding-top:16px;margin-top:18px;color:var(--muted);font-size:12px}@media(max-width:650px){.receipt-paper{padding:16px}.receipt-grid{grid-template-columns:82px 1fr}.receipt-grid>div:nth-child(3){grid-column:1/-1}.receipt-photo img,.photo-placeholder{width:76px;height:95px}}
+@media print{aside,.top,.actions,.no-print{display:none!important}main{padding:0}.card,.tablewrap{box-shadow:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="modal" class="modal hidden"></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const KEY="feesledger_v1";
+const roles={SUPER_ADMIN:"super_admin",SCHOOL_ADMIN:"school_admin",ACCOUNTANT:"accountant"};
+let db=JSON.parse(localStorage.getItem(KEY)||"null");
+let session=JSON.parse(localStorage.getItem(KEY+"_session")||"null");
+let page="dashboard", term="Term 1", year="2026–2027", search="", statusFilter="all", historySearch="", historyYear="All Years", historyTerm="All Terms", historyClass="All Classes", saveFilesSearch="";
+let saveFilesPending=[];
+const FILE_SIZE_LIMITS={pdf:10*1024*1024,doc:10*1024*1024,xls:10*1024*1024,image:5*1024*1024,other:10*1024*1024};
+const MAX_FILES_PER_USER=100, MAX_STORAGE_PER_USER=500*1024*1024;
+
+function uid(p="id"){return p+"_"+Math.random().toString(36).slice(2,10)+Date.now().toString(36)}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function money(n){return Number(n||0).toLocaleString()+" FRW"}
+function pct(p){return Math.max(0,Math.min(100,Number(p||0))).toFixed(1)}
+function toast(m){let t=document.getElementById("toast");t.textContent=m;t.classList.remove("hidden");setTimeout(()=>t.classList.add("hidden"),2800)}
+function can(action){
+ if(!session)return false;
+ if(session.role===roles.SUPER_ADMIN)return true;
+ if(session.role===roles.SCHOOL_ADMIN)return ["classes","access","settings","reports","messages"].includes(action);
+ if(session.role===roles.ACCOUNTANT)return ["students","payments","reports","messages"].includes(action);
+ return false;
+}
+function activeStudents(){
+ // Students are registered once per academic year, not once per term.
+ // Term only scopes financial/payment records.
+ return db.students.filter(s=>s.year===year);
+}
+function academicConfig(y=year){
+ if(!db.academics)db.academics={};
+ if(!db.academics[y])db.academics[y]={terms:[
+  {name:"Term 1",start:"",end:""},{name:"Term 2",start:"",end:""},{name:"Term 3",start:"",end:""}
+ ]};
+ return db.academics[y];
+}
+function termNames(y=year){return academicConfig(y).terms.map(t=>t.name).filter(Boolean)}
+function ensureAcademicData(){
+ if(!db.academics)db.academics={};
+ (db.years||[]).forEach(y=>academicConfig(y));
+ if(!db.years?.length){db.years=[year];academicConfig(year)}
+ let names=termNames(year);if(!names.includes(term)&&term!=="All Terms")term=names[0]||"Term 1";
+}
+function classStudents(c){return activeStudents().filter(s=>s.classId===c.id)}
+function totalFeesFor(s){let c=db.classes.find(x=>x.id===s.classId);return Number(s.unitFee ?? c?.unitFee ?? 0)}
+function paymentsFor(s){return db.payments.filter(p=>p.studentId===s.id && p.year===year && (term==="All Terms" || p.term===term))}
+function paidFor(s){return paymentsFor(s).reduce((a,p)=>a+Number(p.amount||0),0)}
+function statusOf(s){let f=totalFeesFor(s),p=paidFor(s);if(f>0&&p>=f)return"paid";if(p>0)return"partial";return"unpaid"}
+function balanceOf(s){return Math.max(0,totalFeesFor(s)-paidFor(s))}
+function percentageOf(s){let f=totalFeesFor(s);return f?Math.min(100,paidFor(s)/f*100):0}
+function log(action,details=""){let st=db.students?.find(x=>details.includes(x.name));let c=st?db.classes.find(x=>x.id===st.classId):null;db.history.unshift({id:uid("log"),action,details,user:session?.email||"system",date:new Date().toISOString(),year,term:term==="All Terms"?"":term,studentName:st?.name||"",studentId:st?.studentId||"",className:c?.name||""});save()}
+function init(){
+ if(!db){
+  db={school:{name:"Green Hills School",logo:"",email:"school@example.com",phone:""},years:["2026–2027"],classes:[
+   {id:uid("c"),name:"S1",unitFee:5000},{id:uid("c"),name:"S2",unitFee:5000},{id:uid("c"),name:"S3",unitFee:5000},{id:uid("c"),name:"S4",unitFee:5000},{id:uid("c"),name:"S5",unitFee:5000},{id:uid("c"),name:"S6",unitFee:5000}],
+   students:[],parents:[],payments:[],history:[],messages:[],templates:[],
+   users:[],savedFiles:[]
+  };
+  save();
+ }
+ if(!db.school)db.school={name:"School",logo:"",email:"",phone:""};
+ if(!db.academics)db.academics={};
+ if(!db.schools)db.schools=[];
+ if(!db.savedFiles)db.savedFiles=[];
+ ensureSuperAdminData();
+ ensureAcademicData();
+ save();
+ render();
+}
+
+function ensureSuperAdminData(){
+ if(!db.schools)db.schools=[];
+ try{
+  const reg=JSON.parse(localStorage.getItem("feesledger_users")||"[]");
+  reg.filter(u=>u.role===roles.SCHOOL_ADMIN).forEach(u=>{
+   let s=db.schools.find(x=>x.id===u.schoolId);
+   if(!s){
+    s={id:u.schoolId||uid("sch"),name:u.schoolName||"School",adminName:u.fullName||u.email,
+       adminEmail:u.email,status:"active",statusSince:new Date().toISOString(),
+       deleteRequestedAt:null,deleteConfirmedAt:null,paidUntil:null};
+    db.schools.push(s);
+   }else{
+    s.name=u.schoolName||s.name;s.adminName=u.fullName||s.adminName;s.adminEmail=u.email;
+   }
+  });
+ }catch(e){}
+ (db.users||[]).filter(u=>u.role===roles.SCHOOL_ADMIN).forEach(u=>{
+  if(!db.schools.some(s=>s.adminEmail===u.email)){
+   db.schools.push({id:u.schoolId||uid("sch"),name:u.schoolName||db.school.name||"School",
+     adminName:u.fullName||u.email,adminEmail:u.email,status:"active",
+     statusSince:new Date().toISOString(),deleteRequestedAt:null,deleteConfirmedAt:null,paidUntil:null});
+  }
+ });
+ db.schools.forEach(s=>applySchoolLifecycle(s));
+}
+function applySchoolLifecycle(s){
+ if(!s)return;
+ const now=Date.now();
+ if(s.deleteRequestedAt){
+  const age=now-new Date(s.deleteRequestedAt).getTime();
+  if(age>=10*24*60*60*1000){
+   s.status="deleted";s.deleteConfirmedAt=s.deleteConfirmedAt||new Date().toISOString();
+  }else if(s.status!=="deleted") s.status="pending_delete";
+ }
+ if(s.paidUntil && new Date(s.paidUntil).getTime()<=now){
+  s.paidUntil=null;
+  if(s.status==="paid")s.status="unpaid";
+ }
+}
+function schoolStatusLabel(s){
+ applySchoolLifecycle(s);
+ if(s.status==="pending_delete"){
+  const left=Math.max(0,10-Math.floor((Date.now()-new Date(s.deleteRequestedAt).getTime())/(24*60*60*1000)));
+  return `Pending Delete · ${left} day${left===1?"":"s"} left`;
+ }
+ if(s.status==="paid"){
+  const left=Math.max(0,Math.ceil((new Date(s.paidUntil).getTime()-Date.now())/(24*60*60*1000)));
+  return `Paid · ${left} day${left===1?"":"s"} left`;
+ }
+ if(s.status==="suspended")return "Suspended";
+ if(s.status==="deleted")return "Deleted";
+ return "Unpaid";
+}
+function schoolBadgeClass(s){
+ if(s.status==="paid"||s.status==="active")return "paid";
+ if(s.status==="pending_delete")return "partial";
+ return "unpaid";
+}
+function superAdminDashboard(){
+ ensureSuperAdminData();
+ const active=db.schools.filter(s=>s.status==="active"||s.status==="paid").length;
+ const unpaid=db.schools.filter(s=>s.status==="unpaid"||s.status==="suspended").length;
+ const pending=db.schools.filter(s=>s.status==="pending_delete").length;
+ return `<div class="grid">
+  <div class="card"><div class="muted">Schools</div><div class="kpi">${db.schools.length}</div></div>
+  <div class="card"><div class="muted">Active / Paid</div><div class="kpi">${active}</div></div>
+  <div class="card"><div class="muted">Unpaid / Suspended</div><div class="kpi">${unpaid}</div></div>
+  <div class="card"><div class="muted">Pending Deletion</div><div class="kpi">${pending}</div></div>
+ </div>
+ <div class="card" style="margin-top:16px"><h2>Super Admin Overview</h2><p class="muted">Manage school subscriptions and communication from one place.</p>
+ <div class="controls"><button class="btn primary" onclick="page='schools';render()">Manage Schools</button><button class="btn" onclick="page='schoolMessages';render()">Compose School Email</button><button class="btn" onclick="page='settings';render()">Settings</button></div></div>`;
+}
+function superSchoolsPage(){
+ ensureSuperAdminData();
+ const q=(window.schoolListSearch||"").toLowerCase();
+ const rows=db.schools.filter(s=>(`${s.name} ${s.adminName} ${s.adminEmail} ${schoolStatusLabel(s)}`).toLowerCase().includes(q));
+ return `<div class="card"><div class="controls" style="justify-content:space-between"><div><h2 style="margin:0">Schools & School Emails</h2><p class="muted">Manage school status, payment state and deletion requests.</p></div><input placeholder="Search school, admin or email…" value="${esc(window.schoolListSearch||"")}" oninput="window.schoolListSearch=this.value;render()"></div>
+ <div class="tablewrap"><table><thead><tr><th>School Admin</th><th>School</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+ ${rows.map(s=>`<tr><td><b>${esc(s.adminName||"—")}</b></td><td>${esc(s.name||"—")}</td><td>${esc(s.adminEmail||"—")}</td><td><span class="badge ${schoolBadgeClass(s)}">${esc(schoolStatusLabel(s))}</span></td><td><div class="controls">
+ ${s.status!=="deleted"?`<button class="btn" onclick="setSchoolStatus('${s.id}','active')">Active</button><button class="btn warning" onclick="setSchoolStatus('${s.id}','suspended')">Suspend</button><button class="btn danger" onclick="requestSchoolDelete('${s.id}')">Delete</button><button class="btn primary" onclick="contactSchool('${s.id}')">Contact School</button><button class="btn success" onclick="markSchoolPaid('${s.id}')">Paid</button><button class="btn danger" onclick="markSchoolUnpaid('${s.id}')">Unpaid</button>`:`<button class="btn" disabled>Deleted</button>`}
+ ${s.status==="pending_delete"?`<button class="btn primary" onclick="cancelSchoolDelete('${s.id}')">Active / Restore</button>`:""}
+ </div></td></tr>`).join("")||`<tr><td colspan="5" class="muted">No schools found.</td></tr>`}
+ </tbody></table></div></div>`;
+}
+function contactSchool(id){
+ const s=db.schools.find(x=>x.id===id);if(!s)return;
+ if(!s.adminEmail||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.adminEmail))return toast("This school does not have a valid admin email.");
+ const subject=`FeesLedger Message - ${s.name}`;
+ const body=`Dear ${s.adminName||"School Administrator"},\n\nI am contacting you regarding your FeesLedger school account.\n\nSchool: ${s.name}\n\nMessage:\n\n\nRegards,\nFeesLedger Super Admin`;
+ db.messages.unshift({id:uid("msg"),type:"Super Admin → School",subject,count:1,status:"Opened in Email App",date:new Date().toISOString(),parent:s.adminEmail,schoolId:s.id,schoolName:s.name,user:session.email});
+ save();
+ window.location.href=`mailto:${encodeURIComponent(s.adminEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+ toast("School email draft opened in your email application.");
+}
+function contactSuperAdmin(){
+ const u=(db.users||[]).find(x=>x.role===roles.SUPER_ADMIN&&x.email);
+ const email=u?.email||"";
+ if(!email)return toast("Super Admin email is not configured.");
+ const schoolName=db.school?.name||session?.schoolName||"School";
+ const subject=`Message from ${schoolName} - FeesLedger`;
+ const body=`Dear Super Admin,\n\nSchool: ${schoolName}\nSchool Admin: ${session?.fullName||""}\n\nMessage:\n\n\nRegards,\n${schoolName} Administration`;
+ db.messages.unshift({id:uid("msg"),type:"School → Super Admin",subject,count:1,status:"Opened in Email App",date:new Date().toISOString(),parent:email,schoolName,user:session.email,schoolId:session.schoolId||null});
+ save();
+ window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+ toast("Super Admin email draft opened in your email application.");
+}
+function requestSchoolDelete(id){
+ const s=db.schools.find(x=>x.id===id);if(!s)return;
+ if(s.status==="pending_delete")return toast("Deletion is already pending.");
+ if(!confirm(`Confirm delete request for ${s.name}? The school will remain recoverable for 10 days.`))return;
+ s.status="pending_delete";s.deleteRequestedAt=new Date().toISOString();s.deleteConfirmedAt=null;save();render();
+ toast("Delete scheduled. You have 10 days to restore this school.");
+}
+function cancelSchoolDelete(id){
+ const s=db.schools.find(x=>x.id===id);if(!s)return;
+ if(s.deleteRequestedAt && Date.now()-new Date(s.deleteRequestedAt).getTime()>=10*24*60*60*1000)return toast("The 10-day deletion period has expired.");
+ s.status="active";s.deleteRequestedAt=null;s.deleteConfirmedAt=null;save();render();toast("School restored to Active.");
+}
+function setSchoolStatus(id,status){
+ const s=db.schools.find(x=>x.id===id);if(!s)return;
+ const label=status==="active"?"active":"suspended";
+ if(!confirm(`Confirm ${label} status for ${s.name}?`))return;
+ if(s.status==="pending_delete"&&status==="active"){s.deleteRequestedAt=null;s.deleteConfirmedAt=null}
+ s.status=status;
+ if(status==="active"&&s.paidUntil && new Date(s.paidUntil)>new Date())s.status="paid";
+ save();render();toast(`School status changed to ${schoolStatusLabel(s)}.`);
+}
+function markSchoolPaid(id){
+ const s=db.schools.find(x=>x.id===id);if(!s)return;
+ if(!confirm(`Confirm PAID status for ${s.name}?`))return;
+ s.status="paid";s.paidUntil=new Date(Date.now()+32*24*60*60*1000).toISOString();s.statusSince=new Date().toISOString();
+ save();render();toast("School marked Paid for 32 days.");
+}
+function markSchoolUnpaid(id){
+ const s=db.schools.find(x=>x.id===id);if(!s)return;
+ if(!confirm(`Confirm UNPAID status for ${s.name}?`))return;
+ s.status="unpaid";s.paidUntil=null;s.statusSince=new Date().toISOString();
+ save();render();toast("School marked Unpaid.");
+}
+function schoolStatusPage(){
+ ensureSuperAdminData();
+ const q=(window.schoolStatusSearch||"").toLowerCase();
+ const rows=db.schools.filter(s=>(`${s.name} ${s.adminName} ${s.adminEmail} ${schoolStatusLabel(s)}`).toLowerCase().includes(q));
+ return `<div class="card"><h2>School Subscription Status</h2><p class="muted">Paid status automatically expires after 32 days and becomes Unpaid.</p><input placeholder="Search…" value="${esc(window.schoolStatusSearch||"")}" oninput="window.schoolStatusSearch=this.value;render()">
+ <div class="tablewrap"><table><thead><tr><th>School Admin</th><th>School Name</th><th>Status</th><th>Subscription</th></tr></thead><tbody>
+ ${rows.map(s=>`<tr><td>${esc(s.adminName||"—")}<br><span class="muted">${esc(s.adminEmail||"")}</span></td><td>${esc(s.name||"—")}</td><td><span class="badge ${schoolBadgeClass(s)}">${esc(schoolStatusLabel(s))}</span></td><td><div class="controls"><button class="btn primary" onclick="markSchoolPaid('${s.id}')">Paid</button><button class="btn danger" onclick="markSchoolUnpaid('${s.id}')">Unpaid</button></div></td></tr>`).join("")||`<tr><td colspan="4" class="muted">No schools found.</td></tr>`}
+ </tbody></table></div></div>`;
+}
+function composeSchoolEmailPage(){
+ ensureSuperAdminData();
+ const eligible=db.schools.filter(s=>s.status!=="deleted");
+ const paid=eligible.filter(s=>s.status==="paid").length;
+ const unpaid=eligible.filter(s=>s.status==="unpaid"||s.status==="suspended"||s.status==="pending_delete").length;
+ const all=eligible.length;
+ return `<div class="card"><h2>Compose School Email</h2><p class="muted">Choose exactly which schools should receive this message. The normal email app will open; nothing is sent automatically.</p>
+ <div class="formgroup"><label>Send To</label><select id="schoolEmailAudience" onchange="updateSchoolEmailAudience()"><option value="all">All Schools (${all})</option><option value="paid">Paid Schools (${paid})</option><option value="unpaid">Unpaid Schools (${unpaid})</option></select></div>
+ <div id="schoolAudiencePreview" class="card" style="margin:10px 0;padding:12px"><b>Selected: All Schools</b><div class="muted">${all} school(s) will receive this message.</div></div>
+ <div class="formgroup"><label>Subject</label><input id="schoolEmailSubject" value="FeesLedger School Account Message"></div>
+ <div class="formgroup"><label>Message</label><textarea id="schoolEmailBody" rows="10">Dear School Administrator,
+
+We are contacting you regarding your FeesLedger school account.
+
+Thank you,
+FeesLedger Administration</textarea></div>
+ <div class="controls"><button class="btn" onclick="page='dashboard';render()">Cancel</button><button class="btn primary" onclick="openSchoolEmail()">Open Email App</button></div></div>`;
+}
+function updateSchoolEmailAudience(){
+ ensureSuperAdminData();
+ const audience=document.getElementById("schoolEmailAudience")?.value||"all";
+ const eligible=db.schools.filter(s=>s.status!=="deleted");
+ const recipients=eligible.filter(s=>audience==="all"||
+   (audience==="paid"&&s.status==="paid")||
+   (audience==="unpaid"&&(s.status==="unpaid"||s.status==="suspended"||s.status==="pending_delete")));
+ const label=audience==="all"?"All Schools":audience==="paid"?"Paid Schools":"Unpaid Schools";
+ const box=document.getElementById("schoolAudiencePreview");
+ if(box)box.innerHTML=`<b>Selected: ${label}</b><div class="muted">${recipients.length} school(s) will receive this message.</div>`;
+}
+
+function openSchoolEmail(){
+ const audience=document.getElementById("schoolEmailAudience").value,subject=document.getElementById("schoolEmailSubject").value.trim(),body=document.getElementById("schoolEmailBody").value;
+ if(!subject||!body)return toast("Subject and message are required.");
+ ensureSuperAdminData();
+ let recipients=db.schools.filter(s=>s.status!=="deleted"&&s.adminEmail&&(
+   audience==="all" || (audience==="paid"&&s.status==="paid") || (audience==="unpaid"&&(s.status==="unpaid"||s.status==="suspended"))
+ )).map(s=>s.adminEmail);
+ recipients=[...new Set(recipients)];
+ if(!recipients.length)return toast("No matching school emails found.");
+ const to=recipients[0],bcc=recipients.slice(1);
+ const url=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`+(bcc.length?`&bcc=${encodeURIComponent(bcc.join(","))}`:"");
+ db.messages.unshift({id:uid("msg"),type:"Super Admin School Email",subject,count:recipients.length,status:"Opened in Email App",date:new Date().toISOString(),parent:recipients.join(","),audience,schoolEmails:recipients,user:session.email});
+ save();window.location.href=url;toast("School email draft opened in your email application.");
+}
+function superSettingsPage(){
+ const u=db.users.find(x=>x.id===session.id);
+ return `<div class="grid"><div class="card"><h2>Super Admin Settings</h2><p class="muted">Role: Super Admin</p><p class="muted">School management, subscription status and school email controls are available from the Super Admin workspace.</p></div>
+ <div class="card"><h2>MFA & Backup Codes</h2><p class="muted">Create new authenticator setup and backup codes whenever needed.</p><button class="btn warning" onclick="setupMFA()">Create New MFA / Backup Codes</button></div>
+ <div class="card"><h2>Backup Codes</h2><p class="muted">Generate a fresh set of one-time backup codes for account recovery.</p><button class="btn primary" onclick="generateBackupCodes()">Generate Backup Codes</button></div></div>`;
+}
+function generateBackupCodes(){
+ const u=db.users.find(x=>x.id===session.id);if(!u)return;
+ u.mfa=u.mfa||{};u.mfa.backup=makeBackup();save();
+ modal(`<h2>New Backup Codes</h2><p class="muted">Save these codes somewhere secure. Each code is intended for one-time recovery.</p><div class="card"><code style="display:block;line-height:2">${u.mfa.backup.map(esc).join("<br>")}</code></div><div class="controls"><button class="btn primary" onclick="closeModal()">Done</button></div>`);
+}
+function render(){
+ if(!session){renderLogin();return}
+ if(session.role===roles.SUPER_ADMIN){
+  ensureSuperAdminData();
+  const spage=page==="schools"||page==="schoolStatus"||page==="schoolMessages"||page==="savefiles"||page==="settings"?page:"dashboard";
+  document.getElementById("root").innerHTML=`<div class="app">
+   <aside><div class="logo">Fees<span>Ledger</span></div><div class="nav">
+   ${nav("dashboard","Dashboard")}
+   ${nav("schools","School Emails")}
+   ${nav("schoolStatus","School Status")}
+   ${nav("schoolMessages","Compose School Email")}
+   ${nav("savefiles","Save Files")}
+   ${nav("settings","Settings")}
+   </div><div style="position:absolute;bottom:18px;left:18px;right:18px"><button class="btn" style="width:100%" onclick="logout()">Logout</button></div></aside>
+   <main><div class="top"><div><h1>${superTitle(spage)}</h1><div class="muted">FeesLedger · Super Admin</div></div></div>${spage==="dashboard"?superAdminDashboard():spage==="schools"?superSchoolsPage():spage==="schoolStatus"?schoolStatusPage():spage==="schoolMessages"?composeSchoolEmailPage():spage==="savefiles"?savedFilesPage():superSettingsPage()}</main></div>`;
+  return;
+ }
+ document.getElementById("root").innerHTML=`<div class="app">
+ <aside><div class="logo">Fees<span>Ledger</span></div><div class="nav">
+ ${nav("dashboard","Dashboard")}
+ ${nav("classes","Classes")}
+ ${nav("students","Students")}
+ ${nav("parents","Parents")}
+ ${nav("payments","Payments")}
+ ${nav("messages","Email Messages")}
+ ${nav("history","History")}
+ ${nav("reports","Reports")}
+ ${session.role!==roles.ACCOUNTANT?nav("users","Users"):""}
+ ${nav("savefiles","Save Files")}
+ ${nav("settings","Settings")}
+ </div><div style="position:absolute;bottom:18px;left:18px;right:18px"><button class="btn" style="width:100%" onclick="logout()">Logout</button></div></aside>
+ <main><div class="top"><div><h1>${title()}</h1><div class="muted">${esc(db.school.name)} · ${esc(session.role)}</div></div><div class="controls">${session?.role===roles.SCHOOL_ADMIN?`<button class="btn" onclick="contactSuperAdmin()">✉️ Contact Super Admin</button>`:""}<select onchange="year=this.value;ensureAcademicData();term=termNames(year)[0]||'Term 1';render()">${db.years.map(y=>`<option ${y===year?"selected":""}>${esc(y)}</option>`).join("")}</select><select onchange="term=this.value;render()">${termNames(year).map(t=>`<option ${t===term?"selected":""}>${esc(t)}</option>`).join("")}<option ${term==="All Terms"?"selected":""}>All Terms</option></select></div></div>${page==="dashboard"?dashboard():page==="classes"?classesPage():page==="students"?studentsPage():page==="parents"?parentsPage():page==="payments"?paymentsPage():page==="messages"?messagesPage():page==="history"?historyPage():page==="reports"?reportsPage():page==="users"?usersPage():page==="savefiles"?savedFilesPage():settingsPage()}</main></div>`;
+}
+function superTitle(p){return ({dashboard:"Super Admin Dashboard",schools:"School Emails",schoolStatus:"School Status",schoolMessages:"Compose School Email",savefiles:"Save Files",settings:"Settings"})[p]||"Super Admin Dashboard";}
+function nav(p,t){return `<button class="${page===p?"active":""}" onclick="page='${p}';render()">${t}</button>`}
+function title(){return ({dashboard:"Dashboard",classes:"Classes & Fees",students:"Students",parents:"Parents",payments:"Payments",messages:"Email Center",history:"Accountant History",reports:"Reports",users:"Users",savefiles:"Save Files",settings:"Settings"})[page]}
+
+function metrics(){
+ let ss=activeStudents(), fees=ss.reduce((a,s)=>a+totalFeesFor(s),0),col=ss.reduce((a,s)=>a+paidFor(s),0);
+ return {ss,fees,col,bal:Math.max(0,fees-col),paid:ss.filter(s=>statusOf(s)==="paid").length,part:ss.filter(s=>statusOf(s)==="partial").length,unpaid:ss.filter(s=>statusOf(s)==="unpaid").length}
+}
+function dashboard(){
+ let m=metrics(), collection=m.fees?m.col/m.fees*100:0;
+ return `<div class="grid">
+ ${metric("Total Classes",db.classes.length)}
+ ${metric("Total Students",m.ss.length)}
+ ${metric("Paid Students",m.paid)}
+ ${metric("Partially Paid",m.part)}
+ ${metric("Unpaid Students",m.unpaid)}
+ ${metric("Expected Revenue",money(m.fees))}
+ ${metric("Collected Revenue",money(m.col))}
+ ${metric("Remaining Revenue",money(m.bal))}
+ </div>
+ <div class="section grid" style="grid-template-columns:1.1fr 1fr">
+ <div class="card"><h2>School Overview</h2>${donut(m.paid,m.part,m.unpaid,m.ss.length)}<div class="muted">Overall Collection</div><div class="metric">${pct(collection)}%</div><div class="progress"><i style="width:${collection}%"></i></div></div>
+ <div class="card"><h2>Class Performance</h2>${classBars()}</div></div>
+ <div class="section card"><h2>Quick Actions</h2><div class="controls">${can("students")?`<button class="btn primary" onclick="openStudent()">+ Add Student</button>`:""}${can("classes")?`<button class="btn success" onclick="openClass()">+ Add Class</button>`:""}<button class="btn" onclick="page='reports';render()">Reports</button><button class="btn" onclick="window.print()">Print</button></div></div>`
+}
+function metric(a,b){return `<div class="card"><div class="muted">${a}</div><div class="metric">${b}</div></div>`}
+function donut(a,b,c,total){let p=total?a/total*100:0,o=total?b/total*100:0;return `<div style="display:flex;align-items:center;gap:20px"><div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(#16a34a 0 ${p}%,#f59e0b ${p}% ${p+o}%,#dc2626 ${p+o}% 100%);position:relative"><div style="position:absolute;inset:25px;background:white;border-radius:50%;display:grid;place-items:center;font-weight:800">${total}</div></div><div><div><span class="badge paid">Paid ${a}</span></div><div style="margin-top:6px"><span class="badge partial">Partial ${b}</span></div><div style="margin-top:6px"><span class="badge unpaid">Unpaid ${c}</span></div></div></div>`}
+function classBars(){let max=Math.max(1,...db.classes.map(c=>classStudents(c).length));return `<div class="chart">${db.classes.map(c=>{let n=classStudents(c).length,h=n/max*160;let ss=classStudents(c),f=ss.reduce((a,s)=>a+totalFeesFor(s),0),p=ss.reduce((a,s)=>a+paidFor(s),0),pc=f?p/f*100:0;return `<div class="bar" style="height:${Math.max(5,h)}px" onclick="showClassAnalytics('${c.id}')"><span>${pct(pc)}%</span><small>${esc(c.name)}</small></div>`}).join("")}</div><button class="btn" onclick="showClassAnalytics('${db.classes[0]?.id||""}')">Tap To View More</button>`}
+
+function classesPage(){
+ return `<div class="section"><div class="controls no-print">${can("classes")?`<button class="btn primary" onclick="openClass()">+ Add Another Table</button>`:""}<button class="btn" onclick="exportCSV()">Export Excel/CSV</button><button class="btn" onclick="window.print()">Print/PDF</button></div></div>
+ ${db.classes.map(c=>classTable(c)).join("")}`
+}
+function classTable(c){
+ let ss=classStudents(c),f=ss.reduce((a,s)=>a+totalFeesFor(s),0),p=ss.reduce((a,s)=>a+paidFor(s),0),bal=Math.max(0,f-p),pc=f?p/f*100:0, today=new Date().toDateString(),todayAmt=db.payments.filter(x=>x.classId===c.id&&new Date(x.date).toDateString()===today&&x.year===year&&(term==="All Terms"||x.term===term)).reduce((a,x)=>a+Number(x.amount),0);
+ return `<div class="card classcard"><div class="classhead"><div><h2>${esc(c.name)}</h2><div class="muted">Unit Price of School Fees: <b>${money(c.unitFee)}</b></div></div><div class="controls no-print">${can("classes")?`<button class="btn" onclick="openClass('${c.id}')">Edit</button>`:""}<button class="btn" onclick="exportClass('${c.id}')">Excel</button><button class="btn" onclick="printClass('${c.id}')">PDF/Print</button></div></div>
+ <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>#</th><th>Student</th><th>ID</th><th>Total Fees</th><th>Paid</th><th>Balance</th><th>%</th><th>Status</th><th class="no-print">Actions</th></tr></thead><tbody>
+ ${ss.sort((a,b)=>a.name.localeCompare(b.name)).map((s,i)=>studentRow(s,i+1)).join("")||`<tr><td colspan="9">No students in this class.</td></tr>`}
+ </tbody></table></div>
+ <div class="summary">
+ ${mini("Total Students",ss.length)}${mini("Paid",ss.filter(s=>statusOf(s)==="paid").length)}${mini("Partial",ss.filter(s=>statusOf(s)==="partial").length)}${mini("Unpaid",ss.filter(s=>statusOf(s)==="unpaid").length)}${mini("Expected",money(f))}${mini("Collected",money(p))}${mini("Remaining",money(bal))}
+ </div><div style="margin-top:10px"><div class="muted">Collection ${pct(pc)}% · Today's Collection ${money(todayAmt)}</div><div class="progress"><i style="width:${pc}%"></i></div></div></div>`
+}
+function mini(a,b){return `<div class="mini"><span class="muted">${a}</span><b>${b}</b></div>`}
+function studentRow(s,i){
+ let st=statusOf(s),f=totalFeesFor(s),p=paidFor(s),b=balanceOf(s),pc=percentageOf(s);
+ return `<tr><td>${i}</td><td><img class="studentpic" src="${s.photo||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23e2e8f0'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' font-size='28'%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E"}">${esc(s.name)}</td><td>${esc(s.studentId)}</td><td>${money(f)}</td><td>${money(p)}</td><td>${money(b)}</td><td>${pct(pc)}%<div class="progress" style="width:80px"><i style="width:${pc}%"></i></div></td><td><span class="badge ${st}">${st==="paid"?"✓ PAID":st==="partial"?"PARTIALLY PAID":"UNPAID"}</span></td><td class="actions no-print">${can("payments")?`<button class="btn success" onclick="setPaid('${s.id}')">PAID</button><button class="btn warning" onclick="openPartial('${s.id}')">PARTIAL</button><button class="btn danger" onclick="setUnpaid('${s.id}')">UNPAID</button>`:""}<button class="btn primary" onclick="openReceipt('${s.id}')">RECEIPT</button>${can("students")?`<button class="btn" onclick="openStudent('${s.id}')">Edit</button>`:""}<button class="btn" onclick="studentHistory('${s.id}')">History</button></td></tr>`
+}
+function studentsPage(){
+ let arr=activeStudents().filter(s=>s.name.toLowerCase().includes(search.toLowerCase())||s.studentId.toLowerCase().includes(search.toLowerCase())||s.parentName.toLowerCase().includes(search.toLowerCase()));
+ if(statusFilter!=="all")arr=arr.filter(s=>statusOf(s)===statusFilter);
+ arr.sort((a,b)=>a.name.localeCompare(b.name));
+ return `<div class="card"><div class="controls"><input placeholder="Search student / ID / parent" value="${esc(search)}" oninput="search=this.value;render()"><select onchange="statusFilter=this.value;render()"><option value="all">All Statuses</option><option value="paid">Paid</option><option value="partial">Partially Paid</option><option value="unpaid">Unpaid</option></select>${can("students")?`<button class="btn primary" onclick="openStudent()">+ Add Student</button><button class="btn success" onclick="openPasteStudents()">+ Paste Student Names</button>`:""}</div></div><div class="section tablewrap"><table><thead><tr><th>#</th><th>Student</th><th>Gender</th><th>Class</th><th>Parent</th><th>Email</th><th>Fees</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody>${arr.map((s,i)=>studentRow(s,i+1)).join("")}</tbody></table></div>`
+}
+function openPasteStudents(){
+ if(!can("students"))return toast("Only Accountant can register students.");
+ modal(`<h2>Paste Student Names</h2><p class="muted">Copy names from Excel, Google Sheets, Word or another document, then paste them below. One name per line.</p><div class="formgroup"><label>Class</label><select id="pasteClass">${db.classes.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select></div><div class="formgroup"><label>Student Names</label><textarea id="pasteNames" style="min-height:220px" placeholder="John Doe\nAlice Uwase\nEric Mugisha"></textarea></div><div id="pastePreview" class="muted"></div><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="previewPasteStudents()">Review Names</button></div>`);
+}
+function previewPasteStudents(){
+ let names=document.getElementById("pasteNames").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),classId=document.getElementById("pasteClass").value;
+ names=[...new Set(names)];if(!names.length)return toast("Paste at least one student name.");
+ let possible=names.filter(n=>db.students.some(s=>s.name.trim().toLowerCase()===n.toLowerCase()&&s.classId===classId));
+ window._pasteNames=names;window._pasteClassId=classId;let dupHtml=possible.length?`<div class="card" style="background:#fff7ed"><b>${possible.length} possible duplicate(s)</b><div class="muted">${possible.map(esc).join(", ")}</div></div>`:`<div class="card" style="background:#f0fdf4">No matching duplicates found.</div>`;modal(`<h2>Review Student Import</h2><p><b>${names.length}</b> unique name(s) found for <b>${esc(db.classes.find(c=>c.id===classId)?.name||"")}</b>.</p>${dupHtml}<div class="section" style="max-height:220px;overflow:auto">${names.map((n,i)=>`<div style="padding:8px;border-bottom:1px solid var(--border)">${i+1}. ${esc(n)}</div>`).join("")}</div><div class="controls"><button class="btn" onclick="openPasteStudents()">Back</button><button class="btn primary" onclick="importPastedStudents(window._pasteNames,window._pasteClassId)">Import ${names.length} Students</button></div>`);
+}
+function importPastedStudents(names,classId){
+ let c=db.classes.find(x=>x.id===classId);if(!c)return toast("Select a valid class.");let added=0,skipped=0;
+ names.forEach(name=>{if(db.students.some(s=>s.name.trim().toLowerCase()===name.trim().toLowerCase()&&s.classId===classId&&s.year===year)){skipped++;return}let number=db.students.filter(s=>s.classId===classId&&s.year===year).length+1;db.students.push({id:uid("stu"),name,studentId:`${c.name}-${String(number).padStart(3,"0")}`,classId,parentName:"",parentEmail:"",gender:"",photo:"",year,term:"Term 1",unitFee:c.unitFee});added++;});log("Students imported",`${added} added${skipped?`; ${skipped} duplicates skipped`:""}`);save();closeModal();render();toast(`${added} student(s) imported${skipped?`; ${skipped} duplicate(s) skipped`:""}.`)
+}
+function hashSimple(str){let h=0;for(let i=0;i<str.length;i++)h=((h<<5)-h)+str.charCodeAt(i)|0;return Math.abs(h)}
+function receiptData(s){let c=db.classes.find(x=>x.id===s.classId),f=totalFeesFor(s),p=paidFor(s),b=balanceOf(s),st=statusOf(s),last=paymentsFor(s).sort((a,b)=>new Date(b.date)-new Date(a.date))[0],receiptNo=last?.receiptNo||`REC-${String(hashSimple(s.id+(last?.date||""))%1000000).padStart(6,"0")}`;return {c,f,p,b,st,last,receiptNo}}
+function receiptHtml(s){let d=receiptData(s),school=db.school||{};return `<div class="receipt-paper"><div class="receipt-head">${school.logo?`<img class="receipt-logo" src="${school.logo}" alt="School logo">`:``}<div><h1>${esc(school.name||"School")}</h1><div class="muted">${esc(school.email||"")} ${school.phone?`· ${esc(school.phone)}`:""}</div></div></div><div class="receipt-title">SCHOOL FEES RECEIPT</div><div class="receipt-meta"><span>Receipt No: <b>${esc(d.receiptNo)}</b></span><span>Date: <b>${humanDate(d.last?.date||new Date().toISOString())}</b></span></div><div class="receipt-grid"><div class="receipt-photo">${s.photo?`<img src="${s.photo}" alt="Student photo">`:`<div class="photo-placeholder">Student<br>Photo</div>`}</div><div><h3>Student Information</h3><p><b>Name:</b> ${esc(s.name)}</p><p><b>Student ID:</b> ${esc(s.studentId)}</p><p><b>Class:</b> ${esc(d.c?.name||"")}</p></div><div><h3>Parent / Guardian</h3><p><b>Name:</b> ${esc(s.parentName||"Not provided")}</p><p><b>Email:</b> ${esc(s.parentEmail||"Not provided")}</p></div></div><div class="receipt-payment"><h3>Payment Information</h3><div class="payline"><span>Total Fees</span><b>${money(d.f)}</b></div><div class="payline"><span>Total Paid</span><b>${money(d.p)}</b></div><div class="payline"><span>Current Payment</span><b>${money(d.last?.amount||0)}</b></div><div class="payline balance"><span>Remaining Balance</span><b>${money(d.b)}</b></div></div><div class="receipt-status ${d.st}">${d.st==="paid"?"✓ PAID":d.st==="partial"?"PARTIALLY PAID":"UNPAID"}</div><div class="receipt-footer">Thank you for your payment.<br><b>${esc(school.name||"School")} Administration · FeesLedger</b></div></div>`}
+function openReceipt(id){let s=db.students.find(x=>x.id===id);if(!s)return toast("Student not found.");modal(`<div class="receipt-wrap">${receiptHtml(s)}<div class="controls no-print" style="margin-top:14px;justify-content:center"><button class="btn" onclick="printReceipt('${s.id}')">Print Receipt</button><button class="btn success" onclick="downloadReceipt('${s.id}')">Download PDF</button><button class="btn primary" onclick="emailReceipt('${s.id}')">Email Receipt</button><button class="btn" onclick="closeModal()">Close</button></div></div>`)}
+function printReceipt(id){
+ let s=db.students.find(x=>x.id===id);if(!s)return;
+ let w=window.open("","_blank");
+ let styles=document.querySelector("style").innerHTML;
+ w.document.write(`<html><head><title>Receipt</title><style>${styles}</style></head><body>${receiptHtml(s)}</body></html>`);
+ w.document.close();
+ setTimeout(()=>{w.focus();w.print()},300)
+}
+function downloadReceipt(id){let s=db.students.find(x=>x.id===id);if(!s)return;printReceipt(id);toast("Use the Print dialog and choose Save as PDF to download the receipt.")}
+function emailReceipt(id){let s=db.students.find(x=>x.id===id);if(!s)return;let email=(s.parentEmail||"").trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast("This parent does not have a valid email address. Add it first.");let d=receiptData(s),subject=`School Fees Payment Receipt - ${s.name}`,body=`Dear Parent,\n\nPlease find the school fees payment information for your child below.\n\nStudent Name: ${s.name}\nStudent ID: ${s.studentId}\nClass: ${d.c?.name||""}\nParent/Guardian: ${s.parentName||""}\nReceipt Number: ${d.receiptNo}\nTotal School Fees: ${money(d.f)}\nTotal Paid: ${money(d.p)}\nCurrent Payment: ${money(d.last?.amount||0)}\nRemaining Balance: ${money(d.b)}\nPayment Date: ${humanDate(d.last?.date||new Date().toISOString())}\nPayment Status: ${d.st.toUpperCase()}\n\nThank you for your payment.\n\n${db.school.name||"School"} Administration`;db.messages.unshift({id:uid("msg"),type:"Receipt",subject,count:1,status:"Opened in Email App",date:new Date().toISOString(),parent:email,studentId:s.id,receiptNo:d.receiptNo,user:session.email,schoolId:session.schoolId||null});save();closeModal();window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;}
+function parentsPage(){
+ let groups={};db.students.forEach(s=>{if(s.year===year){let e=s.parentEmail||"no-email";(groups[e]??=[]).push(s)}});
+ return `<div class="card"><h2>Parents & Children</h2><p class="muted">One parent email can contain multiple children.</p></div><div class="section">${Object.entries(groups).map(([e,ss])=>`<div class="card" style="margin-bottom:10px"><b>${esc(ss[0].parentName)}</b> · ${esc(e)}<div class="muted">${ss.length} child(ren)</div><div class="controls" style="margin-top:8px">${ss.map(s=>`<span class="badge ${statusOf(s)}">${esc(s.name)} · ${esc(db.classes.find(c=>c.id===s.classId)?.name||"")}</span>`).join(" ")}</div></div>`).join("")}</div>`
+}
+function paymentsPage(){
+ let ps=[...db.payments].filter(p=>p.year===year&&(term==="All Terms"||p.term===term)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+ return `<div class="card"><h2>Payment History</h2><p class="muted">Every valid payment is permanently recorded.</p></div><div class="section tablewrap"><table><thead><tr><th>Date</th><th>Student</th><th>ID</th><th>Class</th><th>Term</th><th>Amount</th><th>Method</th><th>Recorded By</th></tr></thead><tbody>${ps.map(p=>`<tr><td>${humanDate(p.date)}</td><td>${esc(p.studentName)}</td><td>${esc(p.studentId)}</td><td>${esc(p.className)}</td><td>${esc(p.term)}</td><td>${money(p.amount)}</td><td>${esc(p.method||"Cash")}</td><td>${esc(p.user)}</td></tr>`).join("")||"<tr><td colspan='8'>No payments.</td></tr>"}</tbody></table></div>`
+}
+function messagesPage(){
+ return `<div class="card"><div class="controls"><button class="btn primary" onclick="openMessage()">Compose Email</button><button class="btn" onclick="toast('Templates can be added from the Settings/Email template area.')">Templates</button></div></div>
+ <div class="section tablewrap"><table><thead><tr><th>Date</th><th>Type</th><th>Subject</th><th>Recipients</th><th>Status</th></tr></thead><tbody>${db.messages.map(m=>`<tr><td>${humanDate(m.date)}</td><td>${m.type}</td><td>${esc(m.subject)}</td><td>${m.count}</td><td><span class="badge ${m.status==="Sent"?"paid":"unpaid"}">${m.status}</span></td></tr>`).join("")||"<tr><td colspan='5'>No messages yet.</td></tr>"}</tbody></table></div>`
+}
+function myHistoryScope(){
+ // A user only ever sees their own actions. A School Admin additionally sees
+ // the actions of the accountants they created for their own school.
+ let allowed=new Set([session.email]);
+ if(session.role===roles.SCHOOL_ADMIN){
+  db.users.filter(u=>u.role===roles.ACCOUNTANT&&u.schoolId===session.schoolId).forEach(u=>allowed.add(u.email));
+ }
+ return allowed;
+}
+function historyPage(){
+ let q=historySearch.trim().toLowerCase(), allowed=myHistoryScope(), arr=[
+  ...(db.history||[]).map(x=>({kind:"Activity",date:x.date,year:x.year||year,term:x.term||"",className:x.className||"",student:x.studentName||x.details||"",id:x.studentId||"",subject:x.action||"",amount:x.amount||"",user:x.user||""})),
+  ...(db.payments||[]).map(x=>({kind:"Payment",date:x.date,year:x.year,term:x.term,className:x.className,student:x.studentName,id:x.studentIdText||x.studentId,subject:"Payment",amount:x.amount,user:x.user||""})),
+  ...(db.messages||[]).map(x=>({kind:"Email",date:x.date,year:x.year||"",term:x.term||"",className:x.className||"",student:x.studentName||"",id:x.studentId||"",subject:x.subject||"",amount:"",user:x.user||""}))
+ ];
+ arr=arr.filter(x=>allowed.has(x.user));
+ arr=arr.filter(x=>(historyYear==="All Years"||x.year===historyYear)&&(historyTerm==="All Terms"||x.term===historyTerm)&&(historyClass==="All Classes"||x.className===historyClass)&&(!q||[x.student,x.id,x.subject,x.kind,x.user,x.className].join(" ").toLowerCase().includes(q)));
+ arr.sort((a,b)=>new Date(b.date)-new Date(a.date));
+ return `<div class="card"><div class="controls"><input placeholder="Search student, ID, receipt, email, activity…" value="${esc(historySearch)}" oninput="historySearch=this.value;render()"><select onchange="historyYear=this.value;render()"><option>All Years</option>${db.years.map(y=>`<option ${historyYear===y?"selected":""}>${esc(y)}</option>`).join("")}</select><select onchange="historyTerm=this.value;render()"><option>All Terms</option>${termNames(historyYear==="All Years"?year:historyYear).map(t=>`<option ${historyTerm===t?"selected":""}>${esc(t)}</option>`).join("")}</select><select onchange="historyClass=this.value;render()"><option>All Classes</option>${db.classes.map(c=>`<option ${historyClass===c.name?"selected":""}>${esc(c.name)}</option>`).join("")}</select><button class="btn" onclick="historySearch='';historyYear='All Years';historyTerm='All Terms';historyClass='All Classes';render()">Clear</button></div><div class="controls" style="margin-top:10px"><input type="date" id="histFrom"><input type="date" id="histTo"><button class="btn" onclick="applyHistoryDates()">Apply Dates</button><button class="btn" onclick="exportHistory()">Export Excel/CSV</button></div></div>
+ <div class="section tablewrap"><table><thead><tr><th>Date</th><th>Year</th><th>Term</th><th>Class</th><th>Student</th><th>Activity</th><th>Amount</th><th>User</th></tr></thead><tbody>${arr.map(x=>`<tr><td>${humanDate(x.date)}</td><td>${esc(x.year)}</td><td>${esc(x.term)}</td><td>${esc(x.className)}</td><td>${esc(x.student)}<div class="muted">${esc(x.id)}</div></td><td>${esc(x.kind)}${x.subject?` · ${esc(x.subject)}`:""}</td><td>${x.amount!==""?money(x.amount):"—"}</td><td>${esc(x.user)}</td></tr>`).join("")||`<tr><td colspan="8">No history records match your filters.</td></tr>`}</tbody></table></div>`;
+}
+function applyHistoryDates(){let f=document.getElementById("histFrom")?.value,t=document.getElementById("histTo")?.value;if(!f&&!t)return render();historySearch=(historySearch+" "+f+" "+t).trim();toast("Date filters applied to the history search.");render()}
+function exportHistory(){toast("History export is ready from the current filtered view.");let rows=[["Date","Academic Year","Term","Class","Student","Activity","Amount","User"]];document.querySelectorAll(".tablewrap tbody tr").forEach(tr=>rows.push([...tr.children].map(td=>td.innerText)));let csv=rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",")).join("\n"),blob=new Blob([csv],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="FeesLedger_History.csv";a.click();URL.revokeObjectURL(a.href)}
+
+function reportsPage(){
+ return `<div class="grid">${metric("Students",metrics().ss.length)}${metric("Expected",money(metrics().fees))}${metric("Collected",money(metrics().col))}${metric("Collection",pct(metrics().fees?metrics().col/metrics().fees*100:0)+"%")}</div><div class="section card"><h2>Report Actions</h2><div class="controls"><button class="btn primary" onclick="exportCSV()">Export Excel/CSV</button><button class="btn" onclick="window.print()">Print / Save as PDF</button></div></div><div class="section">${db.classes.map(c=>{let ss=classStudents(c),f=ss.reduce((a,s)=>a+totalFeesFor(s),0),p=ss.reduce((a,s)=>a+paidFor(s),0);return `<div class="card" style="margin-bottom:10px"><b>${esc(c.name)}</b> · ${ss.length} students · ${money(p)} / ${money(f)} · ${pct(f?p/f*100:0)}%</div>`}).join("")}</div>`
+}
+function openAcademicSettings(){
+ if(!can("classes"))return toast("Only School Admin or Super Admin can manage academic years and terms.");
+ ensureAcademicData();
+ modal(`<h2>Academic Year & Terms</h2><p class="muted">Create or edit the academic year and its three terms. Students do not need to be registered again when you change terms.</p><div class="formgroup"><label>Academic Year</label><input id="ayear" value="${esc(year)}"></div>${academicConfig(year).terms.map((t,i)=>`<div class="card" style="margin:8px 0"><b>Term ${i+1}</b><div class="formgroup"><label>Term Name</label><input id="tname${i}" value="${esc(t.name)}"></div><div class="row"><div class="formgroup"><label>Start Date</label><input id="tstart${i}" type="date" value="${t.start||""}"></div><div class="formgroup"><label>End Date</label><input id="tend${i}" type="date" value="${t.end||""}"></div></div></div>`).join("")}<div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveAcademicSettings()">Save Academic Settings</button></div>`)
+}
+function saveAcademicSettings(){let old=year,newYear=document.getElementById("ayear").value.trim();if(!newYear)return toast("Enter an academic year.");if(old!==newYear){if(!db.years.includes(newYear))db.years.push(newYear);year=newYear}let cfg=academicConfig(newYear);cfg.terms=cfg.terms.map((t,i)=>({name:document.getElementById("tname"+i).value.trim()||`Term ${i+1}`,start:document.getElementById("tstart"+i).value,end:document.getElementById("tend"+i).value}));term=cfg.terms[0].name;save();closeModal();render();toast("Academic year and terms saved.")}
+
+function settingsPage(){
+ let u=db.users.find(x=>x.id===session.id);
+ return `<div class="grid"><div class="card"><h2>School Profile</h2><div class="formgroup"><label>School Name</label><input id="schoolName" value="${esc(db.school.name)}"></div><div class="formgroup"><label>School Email</label><input id="schoolEmail" value="${esc(db.school.email)}"></div><div class="formgroup"><label>Phone</label><input id="schoolPhone" value="${esc(db.school.phone)}"></div><div class="formgroup"><label>School Logo / Photo</label><input type="file" accept="image/*" onchange="readImage(this,'schoolLogo')"><div style="margin-top:8px">${db.school.logo?`<img class="logoPreview" src="${db.school.logo}">`:"No logo"}</div></div><button class="btn primary" onclick="saveSchool()">Save School Settings</button></div>
+ <div class="card"><h2>Academic Year & Terms</h2><p class="muted">Current: <b>${esc(year)}</b> · ${termNames(year).join(" · ")}</p>${can("classes")?`<button class="btn primary" onclick="openAcademicSettings()">Manage Academic Year & Terms</button>`:`<p class="muted">Managed by School Admin.</p>`}</div><div class="card"><h2>My MFA</h2><p class="muted">Role: ${esc(session.role)}</p><button class="btn warning" onclick="setupMFA()">Create New MFA / Backup Codes</button><div class="section"><b>Backup codes</b><div class="muted">Create new backup OTP codes whenever your phone is unavailable.</div></div></div></div>
+ ${session.role===roles.SUPER_ADMIN||session.role===roles.SCHOOL_ADMIN?`<div class="section card"><h2>Accountants & Access</h2><p class="muted">Manage accountant accounts from the dedicated Users page.</p><button class="btn primary" onclick="page='users';render()">Go to Users</button></div>`:""}`
+}
+function saveSchool(){db.school.name=document.getElementById("schoolName").value.trim()||"School";db.school.email=document.getElementById("schoolEmail").value.trim();db.school.phone=document.getElementById("schoolPhone").value.trim();save();toast("School settings saved");render()}
+function readImage(input,target){let f=input.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{if(target==="schoolLogo")db.school.logo=r.result;else document.getElementById("photoData").value=r.result};r.readAsDataURL(f)}
+
+function openClass(id){
+ if(!can("classes"))return toast("Only School Admin or Super Admin can manage classes.");
+ let c=db.classes.find(x=>x.id===id);
+ modal(`<h2>${c?"Edit":"Add"} Class Table</h2><div class="formgroup"><label>Table Name</label><input id="cname" value="${esc(c?.name||"S1")}"></div><div class="formgroup"><label>Academic Year</label><select id="cyear">${db.years.map(y=>`<option ${y===(c?.year||year)?"selected":""}>${esc(y)}</option>`).join("")}</select></div><div class="formgroup"><label>Terms</label><div class="muted">${termNames(c?.year||year).map(t=>`<span class="badge">${esc(t)}</span>`).join(" ")}</div><button class="btn" type="button" onclick="openAcademicSettings()">Edit Academic Year / Terms</button></div><div class="formgroup"><label>Unit Price of School Fees (FRW)</label><input id="cfee" type="number" min="0" value="${c?.unitFee||0}"></div><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveClass('${id||""}')">Save</button></div>`)
+}
+function saveClass(id){let name=document.getElementById("cname").value.trim(),fee=Number(document.getElementById("cfee").value),cyear=document.getElementById("cyear")?.value||year;if(!name||fee<0)return toast("Enter valid class and fee.");if(id){let c=db.classes.find(x=>x.id===id);c.name=name;c.unitFee=fee;db.students.filter(s=>s.classId===id).forEach(s=>s.unitFee=fee);log("Class updated",name)}else{db.classes.push({id:uid("c"),name,unitFee:fee,year:cyear});log("Class created",name)}save();closeModal();render()}
+
+function openStudent(id){
+ if(!can("students"))return toast("Only Accountant can register/edit students.");
+ let s=db.students.find(x=>x.id===id);
+ modal(`<h2>${s?"Edit":"Register"} Student</h2><div class="row">
+ <div class="formgroup"><label>Student Name</label><input id="sname" value="${esc(s?.name||"")}"></div>
+ <div class="formgroup"><label>Student ID</label><input id="sid" value="${esc(s?.studentId||"")}"></div>
+ <div class="formgroup"><label>Gender</label><select id="gender"><option ${s?.gender==="M"?"selected":""}>M</option><option ${s?.gender==="F"?"selected":""}>F</option></select></div>
+ <div class="formgroup"><label>Class</label><select id="sclass">${db.classes.map(c=>`<option value="${c.id}" ${s?.classId===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div>
+ <div class="formgroup"><label>Parent Name</label><input id="pname" value="${esc(s?.parentName||"")}"></div>
+ <div class="formgroup"><label>Parent Email</label><input id="pemail" type="email" value="${esc(s?.parentEmail||"")}"></div>
+ </div><div class="formgroup"><label>Student Photo from Gallery</label><input type="file" accept="image/*" onchange="readImage(this,'studentPhoto')"><input id="photoData" type="hidden" value="${esc(s?.photo||"")}">${s?.photo?`<img class="logoPreview" src="${s.photo}">`:""}</div>
+ <div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveStudent('${id||""}')">Save Student</button></div>`)
+}
+function saveStudent(id){
+ let name=document.getElementById("sname").value.trim(),sid=document.getElementById("sid").value.trim(),classId=document.getElementById("sclass").value,parentName=document.getElementById("pname").value.trim(),parentEmail=document.getElementById("pemail").value.trim(),gender=document.getElementById("gender").value,photo=document.getElementById("photoData").value;
+ if(!name||!sid||!parentName||!parentEmail)return toast("Complete all required fields.");
+ let c=db.classes.find(x=>x.id===classId);
+ if(id){let s=db.students.find(x=>x.id===id);Object.assign(s,{name,studentId:sid,classId,parentName,parentEmail,gender,photo,unitFee:c.unitFee});log("Student updated",name)}
+ else{let s={id:uid("stu"),name,studentId:sid,classId,parentName,parentEmail,gender,photo,year,term:"Term 1",unitFee:c.unitFee};db.students.push(s);if(!db.parents.find(p=>p.email===parentEmail))db.parents.push({id:uid("par"),name:parentName,email:parentEmail});log("Student registered",name)}
+ save();closeModal();render();toast("Student saved")}
+function openPartial(id){
+ if(!can("payments"))return toast("Only Accountant can record payments.");
+ let s=db.students.find(x=>x.id===id),remaining=balanceOf(s);
+ modal(`<h2>Partially Paid</h2><div class="muted">${esc(s.name)} · ${esc(db.classes.find(c=>c.id===s.classId)?.name||"")}</div><div class="formgroup"><label>Enter Amount Paid (FRW)</label><input id="payAmount" type="number" min="0" step="1" value="${remaining}"></div><div class="muted">Remaining before this payment: ${money(remaining)}</div><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn warning" onclick="confirmPartial('${id}')">Save</button></div>`)
+}
+function confirmPartial(id){
+ let s=db.students.find(x=>x.id===id),amount=Number(document.getElementById("payAmount").value),f=totalFeesFor(s),already=paidFor(s);
+ if(amount<=0)return toast("Enter a valid amount.");
+ if(already+amount>f){closeModal();toast("Amount exceeds unit school fees. Please review the amount.");return}
+ if(!confirm("Confirm payment amount?"))return;
+ addPayment(s,amount);closeModal();render();toast("Payment recorded.")
+}
+function addPayment(s,amount){let c=db.classes.find(x=>x.id===s.classId);db.payments.push({id:uid("pay"),studentId:s.id,studentName:s.name,studentIdText:s.studentId,classId:c.id,className:c.name,amount,term:term==="All Terms"?s.term:term,year,user:session.email,date:new Date().toISOString(),method:"Cash"});log("Payment recorded",`${s.name} — ${money(amount)}`);save()}
+function setPaid(id){
+ if(!can("payments"))return toast("Only Accountant can record payments.");
+ let s=db.students.find(x=>x.id===id),need=balanceOf(s);if(need<=0)return toast("Already fully paid.");if(!confirm("Are you sure this student has fully paid school fees?"))return;addPayment(s,need);render();toast("Student marked Fully Paid")
+}
+function setUnpaid(id){
+ if(!can("payments"))return toast("Only Accountant can record payments.");
+ let s=db.students.find(x=>x.id===id);if(!confirm("Confirm student is unpaid?"))return;db.payments=db.payments.filter(p=>p.studentId!==id || p.year!==year || p.term!==(term==="All Terms"?p.term:term));log("Student status set unpaid",s.name);save();render();toast("Student marked Unpaid")
+}
+function automaticEmail(s,amount){
+ let children=db.students.filter(x=>x.parentEmail===s.parentEmail&&x.year===year&&(term==="All Terms"||x.term===term));
+ db.messages.unshift({id:uid("msg"),type:"Automatic",subject:"Payment Confirmation — "+(term==="All Terms"?s.term:term),count:1,status:"Simulated/Queued",date:new Date().toISOString(),parent:s.parentEmail,children:children.map(x=>x.id),user:session?.email||"system",schoolId:session?.schoolId||null});
+ save()
+}
+function openMessage(){
+ if(!can("messages"))return toast("You do not have permission to send messages.");
+ modal(`<h2>Compose Parent Email</h2><div class="formgroup"><label>Recipients</label><select id="mrec"><option value="all">All Parents</option><option value="unpaid">Parents with Unpaid Children</option><option value="partial">Parents with Partially Paid Children</option></select></div><div class="formgroup"><label>Subject</label><input id="msub" value="Parent Meeting Invitation"></div><div class="formgroup"><label>Message</label><textarea id="mbody">Dear Parents,
+
+You are invited to attend our parents' meeting.
+
+Date: 
+Time: 
+Location: 
+
+Thank you.</textarea></div><div class="row"><label><input type="checkbox" id="mlogo" checked> Include school logo</label><label><input type="checkbox" id="mstudent" checked> Include children, photos & classes</label></div><div class="controls" style="margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="sendManual()">Preview & Send</button></div>`)
+}
+function sendManual(){let type=document.getElementById("mrec").value,subject=document.getElementById("msub").value.trim(),body=document.getElementById("mbody").value;if(!subject||!body)return toast("Subject and message are required.");let groups={};db.students.filter(s=>s.year===year&&s.parentEmail).forEach(s=>{let st=statusOf(s);if(type==="unpaid"&&st!=="unpaid")return;if(type==="partial"&&st!=="partial")return;(groups[s.parentEmail]??=[]).push(s)});let recipients=Object.keys(groups);if(!recipients.length)return toast("No valid parent email addresses found.");let to=recipients[0],bcc=recipients.slice(1),mailto=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`+(bcc.length?`&bcc=${encodeURIComponent(bcc.join(","))}`:"");db.messages.unshift({id:uid("msg"),type:"Manual",subject,count:recipients.length,status:"Opened in Email App",date:new Date().toISOString(),parent:recipients.join(","),user:session.email,schoolId:session.schoolId||null});save();closeModal();window.location.href=mailto;toast("Email draft opened in your email application. Press Send there when ready.");}
+function setupMFA(){
+ let u=db.users.find(x=>x.id===session.id); if(!u)return;
+ if(u.mfa?.enabled)return toast("MFA is already enabled. Use OTP at login; QR is not shown again.");
+ let secret=u.mfa?.secret||randomSecret();u.mfa={...(u.mfa||{}),enabled:false,secret,backup:u.mfa?.backup?.length?u.mfa.backup:makeBackup(),enrolled:false};save();
+ let uri=`otpauth://totp/FeesLedger:${encodeURIComponent(u.email)}?secret=${secret}&issuer=FeesLedger`;
+ modal(`<div class="otpbox"><h2>Set up MFA</h2><p>Scan this QR code once with Google Authenticator, Microsoft Authenticator, Authy or another compatible authenticator app.</p><div id="qr" style="display:flex;justify-content:center"></div><p class="muted">Secret: ${secret}</p><input id="setupOtp" class="otp" maxlength="6" placeholder="000000"><p class="muted">Enter the 6-digit OTP generated by your authenticator to verify.</p><div class="controls" style="justify-content:center"><button class="btn primary" onclick="verifyMFA('${u.id}')">Verify & Enable MFA</button></div></div>`);
+ setTimeout(()=>new QRCode(document.getElementById("qr"),{text:uri,width:210,height:210}),50)
+}
+function verifyMFA(uid){
+ let u=db.users.find(x=>x.id===uid),code=document.getElementById("setupOtp").value;if(!validTOTP(u.mfa.secret,code))return toast("Invalid OTP. Check your authenticator time.");
+ u.mfa.enabled=true;u.mfa.enrolled=true;save();closeModal();toast("MFA enabled. QR code will not be shown again.");render()
+}
+function randomSecret(){const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let s="";for(let i=0;i<20;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s}
+function makeBackup(){return Array.from({length:10},()=>Math.random().toString(36).slice(2,6).toUpperCase()+"-"+Math.random().toString(36).slice(2,6).toUpperCase())}
+async function hmac(secret,counter){let key=base32(secret),buf=new ArrayBuffer(8),dv=new DataView(buf);dv.setUint32(4,counter);let k=await crypto.subtle.importKey("raw",key,{name:"HMAC",hash:"SHA-1"},false,["sign"]);return new Uint8Array(await crypto.subtle.sign("HMAC",k,buf))}
+function base32(s){let bits="",out=[];s=s.replace(/=+$/,"");for(let c of s){let n="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(c);bits+=n.toString(2).padStart(5,"0")}for(let i=0;i+8<=bits.length;i+=8)out.push(parseInt(bits.slice(i,i+8),2));return new Uint8Array(out)}
+async function totp(secret){let c=Math.floor(Date.now()/30000),h=await hmac(secret,c),o=h[h.length-1]&15,n=((h[o]&127)<<24)|((h[o+1]&255)<<16)|((h[o+2]&255)<<8)|(h[o+3]&255);return String(n%1000000).padStart(6,"0")}
+async function validTOTP(secret,code){for(let d=-1;d<=1;d++){let c=Math.floor(Date.now()/30000)+d,h=await hmac(secret,c),o=h[h.length-1]&15,n=((h[o]&127)<<24)|((h[o+1]&255)<<16)|((h[o+2]&255)<<8)|(h[o+3]&255);if(String(n%1000000).padStart(6,"0")===code)return true}return false}
+function openAccountant(){
+ if(!(session.role===roles.SUPER_ADMIN||session.role===roles.SCHOOL_ADMIN))return;
+ modal(`<h2>Create Accountant</h2><div class="formgroup"><label>Email</label><input id="ae" type="email"></div><div class="formgroup"><label>Temporary Password</label><input id="ap" value="ChangeMe123!"></div><p class="muted">After first login, the accountant must complete MFA setup. The QR code is shown only during MFA enrollment.</p><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveAccountant()">Create</button></div>`)
+}
+function saveAccountant(){let email=document.getElementById("ae").value.trim(),password=document.getElementById("ap").value;if(!email||db.users.some(u=>u.email===email))return toast("Valid unique email required.");db.users.push({id:uid("u"),email,password,role:roles.ACCOUNTANT,schoolId:session.schoolId||null,schoolName:db.school?.name||"",createdAt:new Date().toISOString(),mfa:{enabled:false,secret:null,backup:[],enrolled:false}});save();closeModal();toast("Accountant created. They must complete MFA on first login.");render()}
+function usersPage(){
+ if(!(session.role===roles.SUPER_ADMIN||session.role===roles.SCHOOL_ADMIN))return `<div class="card muted">You do not have access to this page.</div>`;
+ let mine=db.users.filter(x=>x.role===roles.ACCOUNTANT&&x.schoolId===session.schoolId);
+ return `<div class="card"><div class="controls" style="justify-content:space-between;flex-wrap:wrap"><div><h2 style="margin:0">Accountants</h2><p class="muted">Create accountant accounts here. Accountants register students (names, classes, parents, photos) and record payments — they cannot create classes, manage other users, or change school settings.</p></div><button class="btn primary" onclick="openAccountant()">+ Create Accountant</button></div></div>
+ <div class="section tablewrap"><table><thead><tr><th>Email</th><th>MFA Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+ ${mine.map(x=>`<tr><td>${esc(x.email)}</td><td><span class="badge ${x.mfa?.enabled?"paid":"unpaid"}">${x.mfa?.enabled?"MFA Verified":"MFA Not Verified"}</span></td><td>${x.createdAt?humanDate(x.createdAt):"—"}</td><td><button class="btn danger" onclick="removeAccountant('${x.id}')">Remove</button></td></tr>`).join("")||`<tr><td colspan="4" class="muted">No accountants yet. Create one to start registering students and recording payments.</td></tr>`}
+ </tbody></table></div>`;
+}
+function removeAccountant(id){
+ let u=db.users.find(x=>x.id===id&&x.role===roles.ACCOUNTANT);if(!u)return;
+ if(!confirm(`Remove accountant "${u.email}"? They will no longer be able to log in.`))return;
+ db.users=db.users.filter(x=>x.id!==id);save();render();toast("Accountant removed.");
+}
+function hasSuperAdmin(){return (db.users||[]).some(u=>u.role===roles.SUPER_ADMIN)}
+function createFirstSuperAdmin(){
+ if(hasSuperAdmin())return toast("A Super Admin account already exists.");
+ modal(`<h2>Create Super Admin Account</h2><p class="muted">This special setup is available only when no Super Admin exists. The first account will automatically become Super Admin.</p><div class="formgroup"><label>Full Name</label><input id="saName" autocomplete="name" placeholder="Full name"></div><div class="formgroup"><label>Email</label><input id="saEmail" type="email" autocomplete="email" placeholder="admin@example.com"></div><div class="formgroup"><label>Password</label><input id="saPassword" type="password" autocomplete="new-password" placeholder="Minimum 8 characters"></div><div class="formgroup"><label>Confirm Password</label><input id="saConfirm" type="password" autocomplete="new-password" placeholder="Repeat password"></div><div id="saMsg" class="muted" style="margin:8px 0"></div><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="submitFirstSuperAdmin()">Create Super Admin Account</button></div>`);
+}
+function submitFirstSuperAdmin(){
+ if(hasSuperAdmin())return closeModal(),toast("A Super Admin account already exists.");
+ const name=(document.getElementById("saName")?.value||"").trim();
+ const email=(document.getElementById("saEmail")?.value||"").trim().toLowerCase();
+ const password=document.getElementById("saPassword")?.value||"";
+ const confirm=document.getElementById("saConfirm")?.value||"";
+ const msg=document.getElementById("saMsg");
+ if(!name)return msg.textContent="Enter the Super Admin full name.";
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return msg.textContent="Enter a valid email address.";
+ if((db.users||[]).some(u=>u.email===email))return msg.textContent="This email is already registered.";
+ if(password.length<8)return msg.textContent="Password must contain at least 8 characters.";
+ if(password!==confirm)return msg.textContent="Passwords do not match.";
+ const u={id:uid("u"),fullName:name,email,password,role:roles.SUPER_ADMIN,mfa:{enabled:false,secret:null,backup:[],enrolled:false},createdAt:new Date().toISOString()};
+ db.users.push(u);save();closeModal();toast("First Super Admin account created. Please log in.");renderLogin();
+}
+function renderLogin(){
+ document.getElementById("root").innerHTML=`<div class="login"><div class="loginbox"><h1>Fees<span style="color:#16a34a">Ledger</span></h1><p class="muted">Secure School Fees Management</p><div id="loginStep"><div class="formgroup"><label>Email</label><input id="le" value=""></div><div class="formgroup"><label>Password</label><input id="lp" type="password"></div><p style="text-align:right;margin:0 0 4px"><button type="button" onclick="openForgotPassword()" style="border:0;background:none;color:#2563eb;font-weight:700;cursor:pointer;padding:0;font-size:13px">Forgot password?</button></p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px"><button class="btn primary" style="width:100%" onclick="login()">Login</button><button class="btn" style="width:100%;border:1px solid #16a34a;color:#16834a;background:#fff;font-weight:700" onclick="FeSLedgerRegister()">Register</button></div><p style="text-align:center;margin:12px 0 0;color:#64748b;font-size:13px">New school? <button type="button" onclick="FeSLedgerRegister()" style="border:0;background:none;color:#16834a;font-weight:700;cursor:pointer;padding:0">Create an account</button></p><div style="margin-top:10px">${hasSuperAdmin() ? "" : '<button class="btn" style="width:100%;border:1px solid #2563eb;color:#1d4ed8;background:#eff6ff;font-weight:700" onclick="createFirstSuperAdmin()">Create Super Admin Account</button>'}</div><p class="muted" style="margin-top:14px">${hasSuperAdmin()?"Super Admin account already configured.":"First launch: create the Super Admin account once."}</p></div></div></div>`
+}
+async function login(){
+ let email=document.getElementById("le").value.trim(),password=document.getElementById("lp").value,u=db.users.find(x=>x.email===email&&x.password===password);if(!u)return toast("Invalid email or password.");
+ if(u.mfa?.enabled){document.getElementById("loginStep").innerHTML=`<div class="otpbox"><h2>Enter OTP</h2><p class="muted">Open your authenticator app. The enrollment QR code is not shown during login.</p><input id="loginOtp" class="otp" maxlength="6" placeholder="000000"><div style="margin:12px 0"><button class="btn primary" onclick="verifyLogin('${u.id}')">Verify</button><button class="btn" onclick="backupLogin('${u.id}')">Use Backup Code</button></div></div>`}
+ else if(u.role===roles.ACCOUNTANT){session={id:u.id,email:u.email,role:u.role};localStorage.setItem(KEY+"_session",JSON.stringify(session));setupMFA()}
+ else {session={id:u.id,email:u.email,role:u.role,schoolId:u.schoolId,fullName:u.fullName,schoolName:u.schoolName};localStorage.setItem(KEY+"_session",JSON.stringify(session));render()}
+}
+function openForgotPassword(){
+ modal(`<h2>Reset Password</h2><p class="muted">Enter the email on your account. We'll open your email app with a one-time reset code — copy that code into the next screen along with your new password.</p><div class="formgroup"><label>Account Email</label><input id="fpEmail" type="email"></div><div id="fpMsg" class="muted"></div><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="sendPasswordResetCode()">Send Reset Code</button></div>`);
+}
+function sendPasswordResetCode(){
+ let email=document.getElementById("fpEmail").value.trim().toLowerCase(),msg=document.getElementById("fpMsg");
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return msg.textContent="Enter a valid email address.";
+ let u=db.users.find(x=>x.email===email);
+ if(!u)return msg.textContent="No account found with that email.";
+ let code=String(Math.floor(100000+Math.random()*900000));
+ u.resetCode=code;u.resetCodeExpires=Date.now()+15*60*1000;save();
+ let subject="FeesLedger Password Reset Code",body=`Hello,\n\nUse this one-time code to reset your FeesLedger password:\n\n${code}\n\nThis code expires in 15 minutes. If you did not request this, you can ignore this email.\n\nFeesLedger`;
+ window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+ toast("Reset code drafted in your email app.");
+ openResetPasswordForm(email);
+}
+function openResetPasswordForm(email){
+ modal(`<h2>Enter Reset Code</h2><p class="muted">Check the email draft opened for <b>${esc(email)}</b>, send it to yourself if needed, then enter the 6-digit code below along with a new password.</p><div class="formgroup"><label>Reset Code</label><input id="fpCode" class="otp" maxlength="6" placeholder="000000"></div><div class="formgroup"><label>New Password</label><input id="fpNew" type="password" placeholder="Minimum 8 characters"></div><div class="formgroup"><label>Confirm New Password</label><input id="fpConfirm" type="password"></div><div id="fpMsg2" class="muted"></div><div class="controls"><button class="btn" onclick="openForgotPassword()">Back</button><button class="btn primary" onclick="confirmPasswordReset('${esc(email)}')">Reset Password</button></div>`);
+}
+function confirmPasswordReset(email){
+ let u=db.users.find(x=>x.email===email);if(!u)return closeModal();
+ let code=document.getElementById("fpCode").value.trim(),pw=document.getElementById("fpNew").value,cpw=document.getElementById("fpConfirm").value,msg=document.getElementById("fpMsg2");
+ if(!u.resetCode||!u.resetCodeExpires||Date.now()>u.resetCodeExpires)return msg.textContent="This code has expired. Please request a new one.";
+ if(code!==u.resetCode)return msg.textContent="Invalid reset code.";
+ if(pw.length<8)return msg.textContent="Password must contain at least 8 characters.";
+ if(pw!==cpw)return msg.textContent="Passwords do not match.";
+ u.password=pw;u.resetCode=null;u.resetCodeExpires=null;save();closeModal();toast("Password reset. Please log in with your new password.");renderLogin();
+}
+async function verifyLogin(id){let u=db.users.find(x=>x.id===id),code=document.getElementById("loginOtp").value;if(!await validTOTP(u.mfa.secret,code))return toast("Invalid OTP.");session={id:u.id,email:u.email,role:u.role,schoolId:u.schoolId,fullName:u.fullName,schoolName:u.schoolName};localStorage.setItem(KEY+"_session",JSON.stringify(session));render()}
+function backupLogin(id){let u=db.users.find(x=>x.id===id),code=prompt("Enter one backup code");if(!code)return;if(!u.mfa.backup.includes(code.trim().toUpperCase()))return toast("Invalid backup code.");u.mfa.backup=u.mfa.backup.filter(x=>x!==code.trim().toUpperCase());save();session={id:u.id,email:u.email,role:u.role,schoolId:u.schoolId,fullName:u.fullName,schoolName:u.schoolName};localStorage.setItem(KEY+"_session",JSON.stringify(session));render()}
+function logout(){session=null;localStorage.removeItem(KEY+"_session");render()}
+function modal(content){document.getElementById("modal").innerHTML=`<div class="modalbox">${content}</div>`;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden");document.getElementById("modal").innerHTML=""}
+function humanDate(d){let x=new Date(d),now=new Date(),days=Math.floor((now-x)/86400000);if(days===0)return"Today, "+x.toLocaleTimeString();if(days===1)return"Yesterday";if(days<7)return days+" days ago";if(days<30)return Math.floor(days/7)+" week(s) ago";return Math.floor(days/30)+" month(s) ago"}
+function studentHistory(id){let s=db.students.find(x=>x.id===id),ps=db.payments.filter(p=>p.studentId===id).sort((a,b)=>new Date(b.date)-new Date(a.date));modal(`<h2>Payment History — ${esc(s.name)}</h2>${ps.map(p=>`<div class="childcard"><div><b>${money(p.amount)}</b><div class="muted">${humanDate(p.date)} · ${esc(p.term)} · ${esc(p.user)}</div></div></div>`).join("")||"<p>No valid payments recorded.</p>"}<button class="btn" onclick="closeModal()">Close</button>`)}
+function showClassAnalytics(id){let c=db.classes.find(x=>x.id===id);if(!c)return;let ss=classStudents(c),f=ss.reduce((a,s)=>a+totalFeesFor(s),0),p=ss.reduce((a,s)=>a+paidFor(s),0);modal(`<h2>${esc(c.name)} Analytics</h2><div class="grid">${metric("Students",ss.length)}${metric("Paid",ss.filter(s=>statusOf(s)==="paid").length)}${metric("Partial",ss.filter(s=>statusOf(s)==="partial").length)}${metric("Unpaid",ss.filter(s=>statusOf(s)==="unpaid").length)}${metric("Expected",money(f))}${metric("Collected",money(p))}${metric("Remaining",money(Math.max(0,f-p)))}${metric("Collection",pct(f?p/f*100:0)+"%")}</div><div style="margin-top:15px"><div class="progress"><i style="width:${f?p/f*100:0}%"></i></div></div><button class="btn" style="margin-top:15px" onclick="closeModal()">Close</button>`)}
+function exportCSV(){
+ let rows=[["Student ID","Student Name","Class","Parent","Parent Email","Academic Year","Term","Total Fees","Paid","Balance","Percentage","Status"]];
+ activeStudents().sort((a,b)=>a.name.localeCompare(b.name)).forEach(s=>rows.push([s.studentId,s.name,db.classes.find(c=>c.id===s.classId)?.name||"",s.parentName,s.parentEmail,year,term,totalFeesFor(s),paidFor(s),balanceOf(s),pct(percentageOf(s))+"%",statusOf(s)]));
+ let csv=rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",")).join("\n"),blob=new Blob([csv],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="FeesLedger_Report.csv";a.click();URL.revokeObjectURL(a.href)
+}
+function exportClass(id){let c=db.classes.find(x=>x.id===id),rows=[["Student ID","Student","Class","Term","Fees","Paid","Balance","Percentage","Status"]];classStudents(c).forEach(s=>rows.push([s.studentId,s.name,c.name,term,totalFeesFor(s),paidFor(s),balanceOf(s),pct(percentageOf(s))+"%",statusOf(s)]));let blob=new Blob([rows.map(r=>r.join(",")).join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=c.name+"_Report.csv";a.click()}
+function printClass(id){let c=db.classes.find(x=>x.id===id);modal(`<h2>Report — ${esc(c.name)}</h2><p>${esc(db.school.name)} · ${year} · ${term}</p><button class="btn primary" onclick="closeModal();window.print()">Print / Save as PDF</button> <button class="btn" onclick="closeModal()">Close</button>`)}
+
+/* ===== Save Files (per-user personal document storage) ===== */
+function sizeText(n){if(n<1024)return n+" B";if(n<1024*1024)return (n/1024).toFixed(1)+" KB";if(n<1024*1024*1024)return (n/1024/1024).toFixed(1)+" MB";return (n/1024/1024/1024).toFixed(1)+" GB"}
+function fileCategory(f){let name=(f.name||"").toLowerCase(),type=(f.type||"").toLowerCase();
+ if(type==="application/pdf"||name.endsWith(".pdf"))return "pdf";
+ if(name.endsWith(".doc")||name.endsWith(".docx")||type.includes("word"))return "doc";
+ if(name.endsWith(".xls")||name.endsWith(".xlsx")||type.includes("sheet")||type.includes("excel"))return "xls";
+ if(type.startsWith("image/")||name.endsWith(".jpg")||name.endsWith(".jpeg")||name.endsWith(".png"))return "image";
+ return "other";
+}
+function fileCategoryLabel(cat){return {pdf:"PDF",doc:"Word Document",xls:"Excel Spreadsheet",image:"Image",other:"Document"}[cat]||"File"}
+function mySavedFiles(){return (db.savedFiles||[]).filter(x=>x.owner===session.id)}
+function mySavedFilesUsage(){let arr=mySavedFiles();return {count:arr.length,bytes:arr.reduce((a,x)=>a+(x.size||0),0)}}
+function savedFilesPage(){
+ let q=(saveFilesSearch||"").trim().toLowerCase(),usage=mySavedFilesUsage();
+ let arr=mySavedFiles().filter(x=>!q||[x.displayName,x.originalName,x.term,x.year,x.day,x.date,fileCategoryLabel(x.category)].join(" ").toLowerCase().includes(q))
+  .sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+ return `<div class="card">
+ <div class="controls" style="justify-content:space-between;flex-wrap:wrap">
+  <div><h2 style="margin:0">Save Files</h2><p class="muted">Personal document storage for your account · ${usage.count}/${MAX_FILES_PER_USER} files · ${sizeText(usage.bytes)} / ${sizeText(MAX_STORAGE_PER_USER)} used</p></div>
+  <div class="controls"><label class="btn primary" style="cursor:pointer" for="saveFilesInput">+ Add Files</label><input id="saveFilesInput" type="file" multiple hidden onchange="onSaveFilesSelected(this.files)"></div>
+ </div>
+ <div style="position:relative;margin-top:12px">
+  <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%)">🔍</span>
+  <input placeholder="Search by name, term, year, day or date" style="width:100%;padding-left:36px" value="${esc(saveFilesSearch)}" oninput="saveFilesSearch=this.value;render()">
+ </div>
+ </div>
+ <div class="section" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px">
+ ${arr.map(x=>savedFileCard(x)).join("")||`<div class="card muted" style="grid-column:1/-1;text-align:center">${q?"No saved files match your search.":"No saved files yet."}</div>`}
+ </div>`;
+}
+function savedFileCard(x){
+ return `<div class="card">
+  <div style="font-size:28px">📄</div>
+  <div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(x.displayName)}">${esc(x.displayName)}</div>
+  <div class="muted" style="font-size:12px;margin-top:4px">${esc(fileCategoryLabel(x.category))} · ${sizeText(x.size||0)}</div>
+  <div class="muted" style="font-size:12px">${esc(x.day)} · ${esc(x.year)}${x.term?" · "+esc(x.term):""}</div>
+  <div class="controls" style="margin-top:10px">
+   <button class="btn" onclick="openSavedFile('${x.id}')">Open</button>
+   <button class="btn" onclick="renameSavedFile('${x.id}')">Rename</button>
+   <button class="btn danger" onclick="deleteSavedFile('${x.id}')">Delete</button>
+  </div>
+ </div>`;
+}
+function onSaveFilesSelected(fileList){
+ let files=Array.from(fileList||[]);if(!files.length)return;
+ let usage=mySavedFilesUsage(),accepted=[],rejected=[],runningCount=0,runningBytes=0;
+ files.forEach(f=>{
+  let cat=fileCategory(f),limit=FILE_SIZE_LIMITS[cat];
+  if(f.size>limit){rejected.push(`${f.name} (over the ${sizeText(limit)} limit for ${fileCategoryLabel(cat)})`);return}
+  if(usage.count+runningCount+1>MAX_FILES_PER_USER){rejected.push(`${f.name} (100-file limit reached)`);return}
+  if(usage.bytes+runningBytes+f.size>MAX_STORAGE_PER_USER){rejected.push(`${f.name} (500 MB storage limit reached)`);return}
+  accepted.push(f);runningCount++;runningBytes+=f.size;
+ });
+ document.getElementById("saveFilesInput").value="";
+ if(!accepted.length)return toast(rejected[0]||"No valid files selected.");
+ saveFilesPending=accepted;
+ modal(`<h2>Name Your Files</h2><p class="muted">Give each file a name before saving.${rejected.length?`<br><span style="color:#dc2626">${rejected.length} file(s) skipped — ${rejected.map(esc).join("; ")}</span>`:""}</p>
+ ${accepted.map((f,i)=>`<div class="formgroup"><label>${esc(f.name)} (${sizeText(f.size)})</label><input id="saveFileName${i}" value="${esc(f.name.replace(/\.[^.]+$/,""))}"></div>`).join("")}
+ <div class="controls"><button class="btn" onclick="saveFilesPending=[];closeModal()">Cancel</button><button class="btn primary" onclick="confirmSaveFiles()">Save Files</button></div>`);
+}
+async function confirmSaveFiles(){
+ if(!saveFilesPending.length)return closeModal();
+ let now=new Date();if(!db.savedFiles)db.savedFiles=[];
+ for(let i=0;i<saveFilesPending.length;i++){
+  let f=saveFilesPending[i],name=document.getElementById("saveFileName"+i)?.value.trim()||f.name.replace(/\.[^.]+$/,"");
+  let data=await new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f)});
+  db.savedFiles.push({id:uid("file"),owner:session.id,displayName:name,originalName:f.name,category:fileCategory(f),type:f.type||"",size:f.size,data,
+   year,term:term==="All Terms"?"":term,day:now.toLocaleDateString(),date:now.toISOString().slice(0,10),createdAt:now.toISOString()});
+ }
+ save();saveFilesPending=[];closeModal();render();toast("File(s) saved.");
+}
+function openSavedFile(id){let x=(db.savedFiles||[]).find(f=>f.id===id&&f.owner===session.id);if(!x)return toast("File not found.");let a=document.createElement("a");a.href=x.data;a.download=x.originalName||x.displayName;a.target="_blank";document.body.appendChild(a);a.click();a.remove()}
+function renameSavedFile(id){let x=(db.savedFiles||[]).find(f=>f.id===id&&f.owner===session.id);if(!x)return;
+ modal(`<h2>Rename File</h2><div class="formgroup"><label>File Name</label><input id="renameFileInput" value="${esc(x.displayName)}"></div><div class="controls"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="confirmRenameSavedFile('${id}')">Save</button></div>`);
+}
+function confirmRenameSavedFile(id){let x=(db.savedFiles||[]).find(f=>f.id===id&&f.owner===session.id);if(!x)return;let name=document.getElementById("renameFileInput").value.trim();if(!name)return toast("Enter a valid name.");x.displayName=name;save();closeModal();render();toast("File renamed.")}
+function deleteSavedFile(id){let x=(db.savedFiles||[]).find(f=>f.id===id&&f.owner===session.id);if(!x)return;
+ if(!confirm(`Are you sure you want to delete "${x.displayName}"? This action cannot be undone.`))return;
+ db.savedFiles=db.savedFiles.filter(f=>f.id!==id);save();render();toast("File deleted.");
+}
+init();
+</script>
+
+<!-- FEESLEDGER REGISTRATION SYSTEM -->
+<div id="registerOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;width:min(460px,100%);border-radius:18px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:28px;font-weight:800;color:#16834a">FeesLedger</div>
+      <div style="color:#667085">Create your school administrator account</div>
+    </div>
+    <form id="registerForm">
+      <label>Full Name</label>
+      <input id="regName" required placeholder="Your full name" style="width:100%;padding:12px;margin:6px 0 12px;border:1px solid #d0d5dd;border-radius:10px">
+      <label>School Name</label>
+      <input id="regSchool" required placeholder="School name" style="width:100%;padding:12px;margin:6px 0 12px;border:1px solid #d0d5dd;border-radius:10px">
+      <label>Email</label>
+      <input id="regEmail" type="email" required placeholder="admin@school.com" style="width:100%;padding:12px;margin:6px 0 12px;border:1px solid #d0d5dd;border-radius:10px">
+      <label>Password</label>
+      <input id="regPassword" type="password" minlength="8" required placeholder="At least 8 characters" style="width:100%;padding:12px;margin:6px 0 12px;border:1px solid #d0d5dd;border-radius:10px">
+      <label>Confirm Password</label>
+      <input id="regConfirm" type="password" minlength="8" required placeholder="Repeat password" style="width:100%;padding:12px;margin:6px 0 16px;border:1px solid #d0d5dd;border-radius:10px">
+      <button type="submit" style="width:100%;padding:13px;border:0;border-radius:10px;background:#16834a;color:#fff;font-size:16px;font-weight:700;cursor:pointer">Create Account</button>
+      <div id="registerMsg" style="margin-top:12px;text-align:center;font-size:14px"></div>
+    </form>
+    <div style="margin-top:16px;text-align:center;color:#667085;font-size:12px">
+      Your local demo account is stored in this browser. For production, connect this form to Supabase Auth.
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const KEY='feesledger_users';
+  const SESSION='feesledger_session';
+
+  function users(){ try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []} }
+  function saveUsers(v){localStorage.setItem(KEY,JSON.stringify(v))}
+  function hash(s){
+    let h=2166136261;
+    for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+    return (h>>>0).toString(16);
+  }
+  function openRegister(){
+    const o=document.getElementById('registerOverlay');
+    if(o)o.style.display='flex';
+  }
+  function closeRegister(){
+    const o=document.getElementById('registerOverlay');
+    if(o)o.style.display='none';
+  }
+
+  window.FeSLedgerRegister=openRegister;
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    const form=document.getElementById('registerForm');
+    if(!form)return;
+    form.addEventListener('submit',e=>{
+      e.preventDefault();
+      const name=document.getElementById('regName').value.trim();
+      const school=document.getElementById('regSchool').value.trim();
+      const email=document.getElementById('regEmail').value.trim().toLowerCase();
+      const password=document.getElementById('regPassword').value;
+      const confirm=document.getElementById('regConfirm').value;
+      const msg=document.getElementById('registerMsg');
+      if(password!==confirm){msg.style.color='#d92d20';msg.textContent='Passwords do not match.';return}
+      if(password.length<8){msg.style.color='#d92d20';msg.textContent='Password must contain at least 8 characters.';return}
+      const list=users();
+      if(list.some(u=>u.email===email)){msg.style.color='#d92d20';msg.textContent='This email is already registered.';return}
+
+      const user={
+        id:'USR-'+Date.now(),
+        fullName:name,
+        email,
+        passwordHash:hash(password),
+        role:'school_admin',
+        schoolId:'SCH-'+Date.now(),
+        schoolName:school,
+        mfa:{
+          enabled:false,
+          enrolled:false,
+          backupCodes:[]
+        },
+        createdAt:new Date().toISOString()
+      };
+      list.push(user);
+      saveUsers(list);
+      try{
+        const mainDb=JSON.parse(localStorage.getItem("feesledger_v1")||"null");
+        if(mainDb){
+          mainDb.users=mainDb.users||[];
+          if(!mainDb.users.some(u=>u.email===email)) mainDb.users.push({id:user.id,email,password,role:"school_admin",fullName:name,schoolId:user.schoolId,schoolName:school,mfa:{enabled:false,secret:null,backup:[]}});
+          mainDb.school=mainDb.school||{}; mainDb.school.name=school; mainDb.school.email=email;
+          mainDb.schools=mainDb.schools||[];
+          if(!mainDb.schools.some(s=>s.id===user.schoolId)) mainDb.schools.push({id:user.schoolId,name:school,adminName:name,adminEmail:email,status:"active",statusSince:new Date().toISOString(),deleteRequestedAt:null,deleteConfirmedAt:null,paidUntil:null});
+          localStorage.setItem("feesledger_v1",JSON.stringify(mainDb));
+          localStorage.setItem("feesledger_v1_session",JSON.stringify({id:user.id,email,role:"school_admin"}));
+        }
+      }catch(err){console.warn("Registration sync failed",err)}
+      localStorage.setItem(SESSION,JSON.stringify({
+        userId:user.id, role:user.role, schoolId:user.schoolId,
+        fullName:user.fullName,email:user.email,schoolName:user.schoolName
+      }));
+
+      const profile=JSON.parse(localStorage.getItem('feesledger_school_profile')||'{}');
+      profile.schoolId=user.schoolId;
+      profile.schoolName=school;
+      profile.adminName=name;
+      profile.adminEmail=email;
+      localStorage.setItem('feesledger_school_profile',JSON.stringify(profile));
+
+      msg.style.color='#16834a';
+      msg.textContent='Account created successfully. Opening FeesLedger…';
+      setTimeout(()=>{ closeRegister(); location.reload(); },700);
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    if(localStorage.getItem(SESSION)) return;
+    const candidates=[...document.querySelectorAll('button,a')];
+    const login=candidates.find(x=>/login|sign in|connexion/i.test((x.textContent||'').trim()));
+    if(login && !document.getElementById('dynamicRegisterBtn')){
+      const b=document.createElement('button');
+      b.id='dynamicRegisterBtn';
+      b.type='button';
+      b.textContent='Create account / Register';
+      b.onclick=openRegister;
+      b.style.cssText='margin-left:8px;padding:10px 14px;border:1px solid #16834a;border-radius:9px;background:#fff;color:#16834a;font-weight:700;cursor:pointer';
+      login.parentElement?.appendChild(b);
+    }
+  });
+})();
+</script>
+
+<!-- FEESLEDGER MFA ENROLLMENT -->
+<div id="mfaEnrollOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:999999;align-items:center;justify-content:center;padding:18px">
+  <div style="background:#fff;width:min(480px,100%);max-height:94vh;overflow:auto;border-radius:20px;padding:26px;box-sizing:border-box;box-shadow:0 25px 80px rgba(0,0,0,.35)">
+    <div style="text-align:center">
+      <div style="font-size:25px;font-weight:800;color:#16834a">Secure your account with MFA</div>
+      <p style="color:#667085;line-height:1.5">Open Google Authenticator, Microsoft Authenticator or Authy and scan the QR code below.</p>
+      <div id="mfaQr" style="width:220px;height:220px;margin:18px auto;display:flex;align-items:center;justify-content:center"></div>
+      <div style="font-size:12px;color:#667085">Manual setup key</div>
+      <div id="mfaSecret" style="margin:7px 0 18px;padding:12px;background:#f2f4f7;border-radius:9px;font-family:monospace;font-weight:800;word-break:break-all"></div>
+      <input id="mfaOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit OTP"
+        style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #d0d5dd;border-radius:10px;text-align:center;font-size:20px;letter-spacing:6px">
+      <button id="mfaVerifyBtn" type="button" style="width:100%;margin-top:12px;padding:14px;border:0;border-radius:10px;background:#16834a;color:white;font-weight:800;font-size:15px;cursor:pointer">Verify & Enable MFA</button>
+      <div id="mfaMsg" style="margin-top:12px;min-height:20px;font-size:14px"></div>
+      <div style="font-size:12px;color:#98a2b3;margin-top:10px">The QR code is only for first-time enrollment. It will not be shown during normal login.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP CODES -->
+<div id="backupOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:999998;align-items:center;justify-content:center;padding:18px">
+ <div style="background:#fff;width:min(440px,100%);border-radius:18px;padding:24px;box-sizing:border-box">
+  <h3 style="margin-top:0">MFA Backup Codes</h3>
+  <p style="color:#667085">Save these codes somewhere safe. Each code should be used only once.</p>
+  <div id="backupCodes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:monospace"></div>
+  <button type="button" onclick="document.getElementById('backupOverlay').style.display='none'" style="width:100%;margin-top:18px;padding:12px;border:0;border-radius:9px;background:#16834a;color:#fff;font-weight:700">Done</button>
+ </div>
+</div>
+
+<script>
+(function(){
+  const USERS_KEY='feesledger_users';
+  const SESSION_KEY='feesledger_session';
+  let pendingUserId=null;
+
+  const readUsers=()=>{try{return JSON.parse(localStorage.getItem(USERS_KEY)||'[]')}catch(e){return[]}};
+  const writeUsers=u=>localStorage.setItem(USERS_KEY,JSON.stringify(u));
+
+  function randomBase32(){
+    const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    const bytes=new Uint8Array(20); crypto.getRandomValues(bytes);
+    let out='', buffer=0, bits=0;
+    for(const b of bytes){
+      buffer=(buffer<<8)|b; bits+=8;
+      while(bits>=5){out+=chars[(buffer>>(bits-5))&31];bits-=5}
+    }
+    if(bits) out+=chars[(buffer<<(5-bits))&31];
+    return out;
+  }
+
+  function base32Bytes(str){
+    const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let buffer=0,bits=0,out=[];
+    for(const c of str.replace(/=+$/,'').toUpperCase()){
+      const n=chars.indexOf(c); if(n<0) continue;
+      buffer=(buffer<<5)|n; bits+=5;
+      if(bits>=8){bits-=8;out.push((buffer>>bits)&255)}
+    }
+    return new Uint8Array(out);
+  }
+
+  async function totp(secret, offset=0){
+    const counter=Math.floor(Date.now()/30000)+offset;
+    const data=new ArrayBuffer(8), dv=new DataView(data);
+    dv.setUint32(0,Math.floor(counter/4294967296));
+    dv.setUint32(4,counter>>>0);
+    const key=await crypto.subtle.importKey('raw',base32Bytes(secret),{name:'HMAC',hash:'SHA-1'},false,['sign']);
+    const mac=new Uint8Array(await crypto.subtle.sign('HMAC',key,data));
+    const o=mac[mac.length-1]&15;
+    const n=((mac[o]&127)<<24)|((mac[o+1]&255)<<16)|((mac[o+2]&255)<<8)|(mac[o+3]&255);
+    return String(n%1000000).padStart(6,'0');
+  }
+
+  async function verifyTotp(secret, code){
+    for(const offset of [-1,0,1]) if(await totp(secret,offset)===code) return true;
+    return false;
+  }
+
+  function openMfaEnrollment(user){
+    pendingUserId=user.id;
+    user.mfa=user.mfa||{};
+    if(!user.mfa.secret) user.mfa.secret=randomBase32();
+    const users=readUsers(), i=users.findIndex(x=>x.id===user.id);
+    if(i>=0){users[i]=user;writeUsers(users)}
+
+    const overlay=document.getElementById('mfaEnrollOverlay');
+    overlay.style.display='flex';
+    document.getElementById('mfaQr').innerHTML='';
+
+    const uri='otpauth://totp/FeesLedger:'+encodeURIComponent(user.email)
+      +'?secret='+user.mfa.secret+'&issuer=FeesLedger&algorithm=SHA1&digits=6&period=30';
+
+    if(window.QRCode){
+      new QRCode(document.getElementById('mfaQr'),{
+        text:uri,width:220,height:220,
+        correctLevel:QRCode.CorrectLevel.M
+      });
+    }else{
+      document.getElementById('mfaQr').innerHTML='<div style="padding:20px;color:#d92d20">QR library could not load. Use the manual setup key below.</div>';
+    }
+    document.getElementById('mfaSecret').textContent=user.mfa.secret;
+    document.getElementById('mfaOtp').value='';
+    document.getElementById('mfaMsg').textContent='';
+  }
+
+  function showBackupCodes(codes){
+    document.getElementById('backupCodes').innerHTML=codes.map(c=>'<div style="padding:10px;background:#f2f4f7;border-radius:7px;text-align:center">'+c+'</div>').join('');
+    document.getElementById('backupOverlay').style.display='flex';
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries++;
+      const session=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
+      if(session){
+        const users=readUsers(), user=users.find(x=>x.id===session.userId);
+        if(user && user.mfa && !user.mfa.enrolled){
+          clearInterval(timer);
+          openMfaEnrollment(user);
+        }
+      }
+      if(tries>40) clearInterval(timer);
+    },250);
+
+    const verify=document.getElementById('mfaVerifyBtn');
+    if(verify) verify.addEventListener('click',async function(){
+      const code=document.getElementById('mfaOtp').value.trim();
+      const msg=document.getElementById('mfaMsg');
+      const users=readUsers(), i=users.findIndex(x=>x.id===pendingUserId);
+      if(i<0){msg.style.color='#d92d20';msg.textContent='Account not found.';return}
+      if(!/^\d{6}$/.test(code)){msg.style.color='#d92d20';msg.textContent='Enter the 6-digit code shown in your authenticator app.';return}
+      msg.style.color='#667085';msg.textContent='Checking OTP…';
+      const user=users[i];
+      if(await verifyTotp(user.mfa.secret,code)){
+        const backup=[];
+        for(let n=0;n<8;n++) backup.push(String(Math.floor(100000+Math.random()*900000)));
+        user.mfa.enabled=true;
+        user.mfa.enrolled=true;
+        user.mfa.backupCodes=backup;
+        user.mfa.enrolledAt=new Date().toISOString();
+        users[i]=user;writeUsers(users);
+        document.getElementById('mfaEnrollOverlay').style.display='none';
+        showBackupCodes(backup);
+      }else{
+        msg.style.color='#d92d20';
+        msg.textContent='Invalid or expired OTP. Make sure your phone time is set automatically and try again.';
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
